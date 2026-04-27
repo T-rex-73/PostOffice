@@ -45,10 +45,7 @@ function PrintContent() {
     }).catch(() => setLoading(false))
   }, [])
 
-  // ลบซองตาม index
-  const handleDelete = (index: number) => {
-    setRecords(prev => prev.filter((_, i) => i !== index))
-  }
+  // (delete functionality removed)
 
   const sizeLabel: Record<string,string> = {
     DL:'ซองยาว DL (230×110 มม.)', A4:'ซอง A4 แนวนอน (297×210 มม.)', A4_FOLD:'A4 พับหลัง แนวตั้ง (210×297 มม.)',
@@ -78,21 +75,10 @@ function PrintContent() {
           body { background:#e5e7eb; padding:20px; }
           #envelope-print-area > div { margin:0 auto 24px; box-shadow:0 4px 20px rgba(0,0,0,.2); }
           .envelope-wrapper { position:relative; }
-          .delete-btn {
-            position:absolute; top:8px; right:8px; z-index:10;
-            background:#EE2D24; color:white; border:none;
-            width:32px; height:32px; border-radius:50%;
-            font-size:16px; cursor:pointer; display:flex;
-            align-items:center; justify-content:center;
-            box-shadow:0 2px 6px rgba(0,0,0,.3);
-            transition:background 0.2s;
-          }
-          .delete-btn:hover { background:#c0392b; }
         }
         @media print {
           body { background:white !important; padding:0 !important; }
           .no-print { display:none !important; }
-          .delete-btn { display:none !important; }
         }
       `}</style>
 
@@ -146,13 +132,6 @@ function PrintContent() {
       <div id="envelope-print-area">
         {records.map((record, index) => (
           <div key={index} className="envelope-wrapper" style={{ position:'relative', display:'inline-block', width:'100%' }}>
-            <button
-              className="delete-btn no-print"
-              onClick={() => handleDelete(index)}
-              title="ลบซองนี้"
-            >
-              ✕
-            </button>
             <EnvelopeTemplate
               records={[record]}
               size={size}
