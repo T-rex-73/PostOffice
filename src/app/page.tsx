@@ -710,7 +710,6 @@ function RegisterPage({ setPage, locations, refresh, addToast, currentUser }:any
 // ── Queue Page ────────────────────────────────────────────────────────────────
 const PAGE_SIZE=20
 function QueuePage({ setPage, addToast, currentUser }:any) {
-  const [showManual,setShowManual]=useState(false)
   const [dateFrom,setDateFrom]=useState('')
   const [dateTo,setDateTo]=useState('')
   const [ownerFilter,setOwnerFilter]=useState('')
@@ -963,90 +962,22 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
         </div>
       </div>
 
-      {/* Operation Manual */}
-      <div className="glass-card mb-6">
-        <button onClick={()=>setShowManual(v=>!v)} className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors rounded-2xl">
-          <span className="flex items-center gap-2 font-bold text-secondary dark:text-white text-sm">
-            <span className="material-icons text-primary text-base">menu_book</span>
-            คู่มือปฏิบัติงาน — พิมพ์หนังสือ
-          </span>
-          <span className="material-icons text-slate-400 text-sm transition-transform" style={{transform:showManual?'rotate(180deg)':'rotate(0deg)'}}>expand_more</span>
-        </button>
-        {showManual&&(
-          <div className="px-5 pb-5 animate-fadeIn">
-            <div className="grid md:grid-cols-3 gap-4">
-              {/* Step 1 */}
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-4 border border-blue-100 dark:border-blue-800">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="bg-secondary text-white text-xs font-black w-6 h-6 rounded-full flex items-center justify-center">1</span>
-                  <span className="font-bold text-secondary dark:text-white text-sm">กรองและเลือกข้อมูล</span>
-                </div>
-                <ul className="text-xs text-slate-600 dark:text-slate-300 space-y-1.5">
-                  <li className="flex items-start gap-1.5"><span className="material-icons text-primary text-xs mt-0.5">arrow_right</span>กรองข้อมูลตามวันที่และเจ้าของเรื่อง</li>
-                  <li className="flex items-start gap-1.5"><span className="material-icons text-primary text-xs mt-0.5">arrow_right</span>กดปุ่ม <strong>ค้นหา</strong> เพื่อโหลดรายการ</li>
-                  <li className="flex items-start gap-1.5"><span className="material-icons text-primary text-xs mt-0.5">arrow_right</span>เลือกรายการที่ต้องการพิมพ์ (คลิกที่แถว)</li>
-                  <li className="flex items-start gap-1.5"><span className="material-icons text-primary text-xs mt-0.5">arrow_right</span>ใช้ปุ่ม <strong>หน้านี้</strong> หรือ <strong>ทั้งหมด</strong> เพื่อเลือกหลายรายการ</li>
-                </ul>
-              </div>
-              {/* Step 2 */}
-              <div className="bg-green-50 dark:bg-green-900/20 rounded-2xl p-4 border border-green-100 dark:border-green-800">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="bg-success text-white text-xs font-black w-6 h-6 rounded-full flex items-center justify-center">2</span>
-                  <span className="font-bold text-secondary dark:text-white text-sm">ใส่เลขแท็กและพิมพ์</span>
-                </div>
-                <ul className="text-xs text-slate-600 dark:text-slate-300 space-y-1.5">
-                  <li className="flex items-start gap-1.5"><span className="material-icons text-success text-xs mt-0.5">arrow_right</span>ใส่ตัวอักษร 2 ตัวแรก (เช่น <strong>ER</strong>) และเลขเริ่มต้น 8 หลัก</li>
-                  <li className="flex items-start gap-1.5"><span className="material-icons text-success text-xs mt-0.5">arrow_right</span>กด <strong>อัตโนมัติ</strong> เพื่อเติมเลขต่อเนื่อง หรือกรอกทีละช่อง</li>
-                  <li className="flex items-start gap-1.5"><span className="material-icons text-success text-xs mt-0.5">arrow_right</span>กด <strong>Enter/Tab</strong> เพื่อข้ามไปแถวถัดไปอัตโนมัติ</li>
-                  <li className="flex items-start gap-1.5"><span className="material-icons text-success text-xs mt-0.5">arrow_right</span>กด <strong>บันทึกแท็ก</strong> ก่อนพิมพ์ทุกครั้ง</li>
-                </ul>
-              </div>
-              {/* Step 3 */}
-              <div className="bg-amber-50 dark:bg-amber-900/20 rounded-2xl p-4 border border-amber-100 dark:border-amber-800">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="bg-warning text-white text-xs font-black w-6 h-6 rounded-full flex items-center justify-center">3</span>
-                  <span className="font-bold text-secondary dark:text-white text-sm">เลือกขนาดกระดาษ</span>
-                </div>
-                <ul className="text-xs text-slate-600 dark:text-slate-300 space-y-1.5">
-                  <li className="flex items-start gap-1.5"><span className="material-icons text-warning text-xs mt-0.5">arrow_right</span><span><strong>DL</strong> = ซองพับ 3 (100×220 มม.)</span></li>
-                  <li className="flex items-start gap-1.5"><span className="material-icons text-warning text-xs mt-0.5">arrow_right</span><span><strong>A4</strong> = ซอง A4 / ซอง A3 (210×297 มม.)</span></li>
-                  <li className="flex items-start gap-1.5"><span className="material-icons text-warning text-xs mt-0.5">arrow_right</span><span><strong>A4 พับหลัง</strong> = พิมพ์หลังจดหมาย</span></li>
-                  <li className="flex items-start gap-1.5"><span className="material-icons text-warning text-xs mt-0.5">arrow_right</span><span>ใบตอบรับ <strong>สีเหลือง/สีฟ้า</strong> = A6 (105×148 มม.)</span></li>
-                </ul>
-              </div>
-            </div>
-            {/* Printer settings note */}
-            <div className="mt-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-slate-100 dark:border-slate-600">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="material-icons text-slate-500 text-sm">print</span>
-                <span className="font-bold text-slate-600 dark:text-slate-300 text-xs">การตั้งค่าเครื่องปริ้น</span>
-              </div>
-              <div className="grid md:grid-cols-2 gap-3 text-xs text-slate-500 dark:text-slate-400">
-                <div>
-                  <p className="font-bold text-slate-600 dark:text-slate-300 mb-1">ขั้นตอน:</p>
-                  <ol className="space-y-1 list-decimal list-inside">
-                    <li>กดปุ่มพิมพ์ → หน้าต่างพิมพ์จะเปิดใน tab ใหม่</li>
-                    <li>กด Ctrl+P (หรือ ⌘+P บน Mac) เพื่อพิมพ์</li>
-                    <li>คลิก <strong>More settings</strong> ในหน้าต่างพิมพ์</li>
-                    <li>เลือก <strong>Paper size</strong> ให้ตรงกับซองที่ใส่</li>
-                  </ol>
-                </div>
-                <div>
-                  <p className="font-bold text-slate-600 dark:text-slate-300 mb-1">ขนาดกระดาษที่ต้องเลือก:</p>
-                  <ul className="space-y-1">
-                    <li>• ซอง A4 → <strong>A4 (210×297 มม.)</strong></li>
-                    <li>• ซองพับ 3 → <strong>DL (100×220 มม.) หรือ ซองจดหมาย #10 (105×241 มม.)</strong></li>
-                    <li>• ใบตอบรับ AR → <strong>A6 (105×148 มม.)</strong></li>
-                  </ul>
-                </div>
-              </div>
-              <p className="text-[10px] text-primary font-bold mt-2 flex items-center gap-1">
-                <span className="material-icons text-xs">warning</span>
-                หน้าถัดไปสำคัญมาก — ตรวจสอบขนาดกระดาษทุกครั้งก่อนพิมพ์
-              </p>
-            </div>
-          </div>
-        )}
+      {/* Operation Manual PDF Link */}
+      <div className="glass-card p-4 mb-6 flex items-center gap-4">
+        <span className="material-icons text-primary text-2xl">menu_book</span>
+        <div className="flex-1">
+          <p className="font-bold text-secondary dark:text-white text-sm">คู่มือปฏิบัติงาน</p>
+          <p className="text-xs text-slate-400 mt-0.5">ขั้นตอนการพิมพ์หนังสือ, ใส่เลขแท็ก และการตั้งค่าเครื่องปริ้น</p>
+        </div>
+        <a
+          href="/คู่มือปฏิบัติงาน_พิมพ์หนังสือ.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:opacity-90 transition-opacity whitespace-nowrap"
+        >
+          <span className="material-icons text-sm">picture_as_pdf</span>
+          เปิดคู่มือ PDF
+        </a>
       </div>
 
       {/* Table */}
