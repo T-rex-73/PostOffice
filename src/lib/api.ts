@@ -70,8 +70,8 @@ export const api = {
   editUser: (username: string, name: string, password: string, currentUser: { username: string; role: string; office_name: string }) =>
     patch('/api/users', { action: 'edit', username, name, password, currentUsername: currentUser.username, currentRole: currentUser.role, currentOffice: currentUser.office_name }),
 
-  setUserLimit: (username: string, access_duration: string, currentUser: { username: string; role: string; office_name: string }) =>
-    patch('/api/users', { action: 'setLimit', username, access_duration, currentUsername: currentUser.username, currentRole: currentUser.role, currentOffice: currentUser.office_name }),
+  setUserLimit: (username: string, access_duration: string, month_count: number | undefined, currentUser: { username: string; role: string; office_name: string }) =>
+    patch('/api/users', { action: 'setLimit', username, access_duration, month_count, currentUsername: currentUser.username, currentRole: currentUser.role, currentOffice: currentUser.office_name }),
 
   // ── Locations ─────────────────────────────────────────────────────────────
   getLocationData: () => fetch('/api/locations').then(r => r.json()),

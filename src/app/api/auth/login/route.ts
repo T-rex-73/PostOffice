@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     // Fetch user by username OR email — separate from password check
     const { data: user, error: fetchError } = await supabaseAdmin
       .from('users')
-      .select('name, username, password, role, approved, office_name, office_address, license_no, post_name, email, access_duration, access_start, access_until')
+      .select('name, username, password, role, approved, office_name, office_address, license_no, post_name, email, access_duration, access_start, access_until, access_month_count')
       .eq(field, identifier)
       .maybeSingle()
 

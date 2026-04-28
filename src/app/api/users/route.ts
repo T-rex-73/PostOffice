@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
     let query = supabaseAdmin
       .from('users')
-      .select('name, username, role, approved, created_at, office_name, access_duration, access_start, access_until')
+      .select('name, username, role, approved, created_at, office_name, access_duration, access_start, access_until, access_month_count')
       .order('office_name', { ascending: true })
       .order('created_at',  { ascending: true })
 
@@ -118,16 +118,19 @@ export async function PATCH(req: NextRequest) {
           return NextResponse.json({ error: 'ระยะเวลาไม่ถูกต้อง' }, { status: 400 })
         const now = new Date()
         let accessUntil: string | null = null
+        // month_count: how many months (only relevant when duration === 'month')
+        const monthCount = typeof rest.month_count === 'number' && rest.month_count > 0 ? Math.floor(rest.month_count) : 1
         if (duration === 'day') {
           const d = new Date(now); d.setDate(d.getDate() + 1); accessUntil = d.toISOString()
         } else if (duration === 'month') {
-          const d = new Date(now); d.setMonth(d.getMonth() + 1); accessUntil = d.toISOString()
+          const d = new Date(now); d.setMonth(d.getMonth() + monthCount); accessUntil = d.toISOString()
         } else if (duration === 'year') {
           const d = new Date(now); d.setFullYear(d.getFullYear() + 1); accessUntil = d.toISOString()
         }
         // 'unlimited' → accessUntil stays null
         update = {
           access_duration: duration,
+          access_month_count: duration === 'month' ? monthCount : null,
           access_start: now.toISOString(),
           access_until: accessUntil,
         }

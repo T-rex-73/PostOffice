@@ -228,6 +228,7 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
   const [editUser,setEditUser]=useState<any>(null)
   const [limitUser,setLimitUser]=useState<any>(null)
   const [selectedDuration,setSelectedDuration]=useState<string>('unlimited')
+  const [monthCount,setMonthCount]=useState<number>(1)
   const [loading,setLoading]=useState(true)
 
   const refresh=useCallback(async()=>{
@@ -286,6 +287,7 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
                   const expired = u.access_until && new Date(u.access_until) < new Date()
                   const daysLeft = u.access_until ? Math.ceil((new Date(u.access_until).getTime()-Date.now())/(1000*60*60*24)) : null
                   const durLabel: Record<string,string> = {day:'รายวัน',month:'รายเดือน',year:'รายปี',unlimited:'ไม่จำกัด'}
+                  const durDisplay = u.access_duration==='month'&&u.access_month_count?`${u.access_month_count} เดือน`:u.access_duration?durLabel[u.access_duration]||u.access_duration:'ไม่จำกัด'
                   return (
                   <tr key={u.username} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30">
                     <td className="px-4 py-3"><div className="font-bold text-slate-800 dark:text-white">{u.name}</div><div className="text-xs text-slate-400 font-mono">@{u.username}</div></td>
@@ -303,12 +305,12 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
                       {u.role==='global_admin'?<span className="text-xs text-slate-300">-</span>:(
                         <div className="flex flex-col items-center gap-0.5">
                           <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${expired?'bg-red-100 text-primary':u.access_until?daysLeft!<=7?'bg-yellow-100 text-warning':'bg-blue-50 text-secondary':'bg-slate-100 text-slate-400'}`}>
-                            {expired?'หมดอายุ':u.access_duration?durLabel[u.access_duration]||u.access_duration:'ไม่จำกัด'}
+                            {expired?'หมดอายุ':durDisplay}
                           </span>
                           {u.access_until&&!expired&&daysLeft!==null&&<span className="text-[9px] text-slate-400">เหลือ {daysLeft} วัน</span>}
                           {u.access_until&&expired&&<span className="text-[9px] text-primary">หมดอายุแล้ว</span>}
                           {currentUser.role==='global_admin'&&u.role!=='global_admin'&&(
-                            <button onClick={()=>{setLimitUser(u);setSelectedDuration(u.access_duration||'unlimited')}} className="text-[9px] text-blue-400 hover:underline mt-0.5">ตั้งค่า</button>
+                            <button onClick={()=>{setLimitUser(u);setSelectedDuration(u.access_duration||'unlimited');setMonthCount(u.access_month_count||1)}} className="text-[9px] text-blue-400 hover:underline mt-0.5">ตั้งค่า</button>
                           )}
                         </div>
                       )}
@@ -351,8 +353,8 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
               <div><h3 className="font-bold text-secondary dark:text-white font-display">ตั้งค่าระยะเวลาการใช้งาน</h3>
                 <p className="text-xs text-slate-400">@{limitUser.username}</p></div>
             </div>
-            <div className="space-y-2 mb-5">
-              {([['day','รายวัน (1 วัน)','today'],['month','รายเดือน (30 วัน)','calendar_month'],['year','รายปี (365 วัน)','event'],['unlimited','ไม่จำกัดเวลา','all_inclusive']] as const).map(([val,label,icon])=>(
+            <div className="space-y-2 mb-3">
+              {([['day','รายวัน (1 วัน)','today'],['month','รายเดือน','calendar_month'],['year','รายปี (1 ปี)','event'],['unlimited','ไม่จำกัดเวลา','all_inclusive']] as const).map(([val,label,icon])=>(
                 <button key={val} onClick={()=>setSelectedDuration(val)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all ${selectedDuration===val?'border-secondary bg-blue-50 dark:bg-blue-900/20 text-secondary':'border-slate-100 dark:border-slate-700 text-slate-500 hover:border-slate-200'}`}>
                   <span className="material-icons text-base">{icon}</span>{label}
@@ -360,10 +362,28 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
                 </button>
               ))}
             </div>
+            {selectedDuration==='month'&&(
+              <div className="mb-4 px-1">
+                <label className="text-xs font-bold text-slate-500 mb-2 block">จำนวนเดือน</label>
+                <div className="flex items-center gap-3">
+                  <button onClick={()=>setMonthCount(m=>Math.max(1,m-1))} className="w-9 h-9 rounded-xl border-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-secondary hover:text-secondary font-bold text-lg transition-all">−</button>
+                  <div className="flex-1 grid grid-cols-6 gap-1">
+                    {[1,2,3,6,9,12,18,24].map(m=>(
+                      <button key={m} onClick={()=>setMonthCount(m)}
+                        className={`py-1.5 rounded-lg text-xs font-bold transition-all ${monthCount===m?'bg-secondary text-white':'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-blue-50 hover:text-secondary'}`}>
+                        {m}
+                      </button>
+                    ))}
+                  </div>
+                  <button onClick={()=>setMonthCount(m=>Math.min(60,m+1))} className="w-9 h-9 rounded-xl border-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-secondary hover:text-secondary font-bold text-lg transition-all">+</button>
+                </div>
+                <p className="text-center text-xs font-black text-secondary mt-2">{monthCount} เดือน ({Math.round(monthCount/12*10)/10} ปี)</p>
+              </div>
+            )}
             <p className="text-[10px] text-slate-400 mb-4 text-center">การตั้งค่าใหม่จะเริ่มนับจากวันนี้</p>
             <div className="flex justify-end gap-2">
               <button onClick={()=>setLimitUser(null)} className="px-4 py-2 text-sm font-bold text-slate-400 border border-slate-200 dark:border-slate-600 rounded-xl">ยกเลิก</button>
-              <button onClick={()=>doAction(()=>api.setUserLimit(limitUser.username,selectedDuration,currentUser),'ตั้งค่าระยะเวลาแล้ว').then(()=>setLimitUser(null))} className="px-4 py-2 text-sm font-bold bg-secondary text-white rounded-xl">บันทึก</button>
+              <button onClick={()=>doAction(()=>api.setUserLimit(limitUser.username,selectedDuration,selectedDuration==='month'?monthCount:undefined,currentUser),'ตั้งค่าระยะเวลาแล้ว').then(()=>setLimitUser(null))} className="px-4 py-2 text-sm font-bold bg-secondary text-white rounded-xl">บันทึก</button>
             </div>
           </div>
         </div>
