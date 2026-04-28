@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
     let query = supabaseAdmin
       .from('users')
-      .select('name, username, role, approved, created_at, office_name')
+      .select('name, username, role, approved, created_at, office_name, access_duration, access_start, access_until')
       .order('office_name', { ascending: true })
       .order('created_at',  { ascending: true })
 
@@ -108,6 +108,31 @@ export async function PATCH(req: NextRequest) {
           return NextResponse.json({ error: 'ไม่สามารถตั้ง global admin ได้' }, { status: 403 })
         update = { role: rest.role }
         break
+      case 'setLimit': {
+        // Only global_admin can set access limits
+        if (!isGlobalAdmin(currentRole))
+          return NextResponse.json({ error: 'เฉพาะ global admin เท่านั้นที่สามารถตั้งค่าระยะเวลาการใช้งานได้' }, { status: 403 })
+        const duration = rest.access_duration as string
+        const validDurations = ['day', 'month', 'year', 'unlimited']
+        if (!validDurations.includes(duration))
+          return NextResponse.json({ error: 'ระยะเวลาไม่ถูกต้อง' }, { status: 400 })
+        const now = new Date()
+        let accessUntil: string | null = null
+        if (duration === 'day') {
+          const d = new Date(now); d.setDate(d.getDate() + 1); accessUntil = d.toISOString()
+        } else if (duration === 'month') {
+          const d = new Date(now); d.setMonth(d.getMonth() + 1); accessUntil = d.toISOString()
+        } else if (duration === 'year') {
+          const d = new Date(now); d.setFullYear(d.getFullYear() + 1); accessUntil = d.toISOString()
+        }
+        // 'unlimited' → accessUntil stays null
+        update = {
+          access_duration: duration,
+          access_start: now.toISOString(),
+          access_until: accessUntil,
+        }
+        break
+      }
       case 'edit':
         update = { name: rest.name }
         if (rest.password && rest.password.length >= 6) update.password = rest.password

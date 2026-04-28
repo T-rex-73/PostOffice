@@ -11,6 +11,9 @@ const htmlDateToThai = (s: string) => { if (!s) return ''; const [y,m,d]=s.split
 type SessionUser = {
   name: string; username: string; role: 'global_admin' | 'admin' | 'user'; approved: boolean
   office_name: string; office_address: string; license_no: string; post_name: string
+  access_duration?: 'day' | 'month' | 'year' | 'unlimited'
+  access_start?: string
+  access_until?: string
 }
 // helper: role ที่มีสิทธิ์ดูแลระบบ
 const canManage = (role: string) => role === 'global_admin' || role === 'admin'
@@ -28,6 +31,62 @@ function Toast({ toasts }: { toasts: ToastItem[] }) {
           {t.message}
         </div>
       ))}
+    </div>
+  )
+}
+
+// ── Expiration Modal ───────────────────────────────────────────────────────────
+// Computes days remaining from access_until (ISO string). Returns null if unlimited/no limit set.
+function getDaysRemaining(access_until?: string): number | null {
+  if (!access_until) return null
+  const now = new Date()
+  const exp = new Date(access_until)
+  const diff = Math.ceil((exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+  return diff
+}
+
+function isAccessExpired(access_until?: string): boolean {
+  if (!access_until) return false
+  return new Date(access_until) < new Date()
+}
+
+function ExpirationModal({ user, onClose, onLogout }: { user: SessionUser; onClose: () => void; onLogout: () => void }) {
+  const expired = isAccessExpired(user.access_until)
+  const daysLeft = getDaysRemaining(user.access_until)
+  const expDate = user.access_until ? new Date(user.access_until).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : ''
+
+  if (expired) {
+    return (
+      <div className="fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center p-4">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-sm animate-fadeIn text-center p-8">
+          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <span className="material-icons text-3xl text-primary">lock</span>
+          </div>
+          <h2 className="text-xl font-black text-slate-800 dark:text-white font-display mb-2">หมดอายุการใช้งานแล้ว</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">บัญชีของคุณหมดอายุเมื่อ</p>
+          <p className="font-bold text-primary mb-5">{expDate}</p>
+          <p className="text-xs text-slate-400 mb-6">กรุณาติดต่อผู้ดูแลระบบเพื่อต่ออายุการใช้งาน</p>
+          <button onClick={onLogout} className="w-full py-3 bg-primary text-white font-bold rounded-2xl text-sm">ออกจากระบบ</button>
+        </div>
+      </div>
+    )
+  }
+
+  // Warning: show when ≤ 7 days left
+  return (
+    <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-sm animate-fadeIn text-center p-8">
+        <div className="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4">
+          <span className="material-icons text-3xl text-warning">schedule</span>
+        </div>
+        <h2 className="text-xl font-black text-slate-800 dark:text-white font-display mb-2">ใกล้หมดอายุการใช้งาน</h2>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">บัญชีของคุณจะหมดอายุใน</p>
+        <p className="font-black text-4xl text-warning mb-1">{daysLeft}</p>
+        <p className="text-sm font-bold text-slate-500 mb-1">วัน</p>
+        <p className="text-xs text-slate-400 mb-6">วันหมดอายุ: <span className="font-bold text-slate-600 dark:text-slate-300">{expDate}</span></p>
+        <p className="text-xs text-slate-400 mb-5">กรุณาติดต่อผู้ดูแลระบบเพื่อต่ออายุก่อนหมดเวลา</p>
+        <button onClick={onClose} className="w-full py-3 bg-secondary text-white font-bold rounded-2xl text-sm">รับทราบ</button>
+      </div>
     </div>
   )
 }
@@ -167,6 +226,8 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
   const [users,setUsers]=useState<any[]>([])
   const [tab,setTab]=useState('users')
   const [editUser,setEditUser]=useState<any>(null)
+  const [limitUser,setLimitUser]=useState<any>(null)
+  const [selectedDuration,setSelectedDuration]=useState<string>('unlimited')
   const [loading,setLoading]=useState(true)
 
   const refresh=useCallback(async()=>{
@@ -218,10 +279,14 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
           {!loading&&tab==='users'&&(
             <div className="overflow-x-auto"><table className="w-full text-sm">
               <thead className="bg-slate-50 dark:bg-slate-700/50 text-slate-400 text-[10px] uppercase font-bold">
-                <tr><th className="px-4 py-3 text-left">ชื่อ / ผู้ใช้</th><th className="px-4 py-3">สำนักงาน</th><th className="px-4 py-3">บทบาท</th><th className="px-4 py-3">สถานะ</th><th className="px-4 py-3">จัดการ</th></tr>
+                <tr><th className="px-4 py-3 text-left">ชื่อ / ผู้ใช้</th><th className="px-4 py-3">สำนักงาน</th><th className="px-4 py-3">บทบาท</th><th className="px-4 py-3">สถานะ</th><th className="px-4 py-3">ระยะเวลา</th><th className="px-4 py-3">จัดการ</th></tr>
               </thead>
               <tbody className="divide-y divide-slate-50 dark:divide-slate-700">
-                {users.map(u=>(
+                {users.map(u=>{
+                  const expired = u.access_until && new Date(u.access_until) < new Date()
+                  const daysLeft = u.access_until ? Math.ceil((new Date(u.access_until).getTime()-Date.now())/(1000*60*60*24)) : null
+                  const durLabel: Record<string,string> = {day:'รายวัน',month:'รายเดือน',year:'รายปี',unlimited:'ไม่จำกัด'}
+                  return (
                   <tr key={u.username} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30">
                     <td className="px-4 py-3"><div className="font-bold text-slate-800 dark:text-white">{u.name}</div><div className="text-xs text-slate-400 font-mono">@{u.username}</div></td>
                     <td className="px-4 py-3 text-xs text-slate-500">{u.office_name||'-'}</td>
@@ -235,6 +300,20 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
                     </td>
                     <td className="px-4 py-3 text-center"><span className={`px-2 py-1 text-[10px] font-bold rounded-full ${u.approved?'bg-green-100 text-success':'bg-yellow-100 text-warning'}`}>{u.approved?'อนุมัติแล้ว':'รออนุมัติ'}</span></td>
                     <td className="px-4 py-3 text-center">
+                      {u.role==='global_admin'?<span className="text-xs text-slate-300">-</span>:(
+                        <div className="flex flex-col items-center gap-0.5">
+                          <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${expired?'bg-red-100 text-primary':u.access_until?daysLeft!<=7?'bg-yellow-100 text-warning':'bg-blue-50 text-secondary':'bg-slate-100 text-slate-400'}`}>
+                            {expired?'หมดอายุ':u.access_duration?durLabel[u.access_duration]||u.access_duration:'ไม่จำกัด'}
+                          </span>
+                          {u.access_until&&!expired&&daysLeft!==null&&<span className="text-[9px] text-slate-400">เหลือ {daysLeft} วัน</span>}
+                          {u.access_until&&expired&&<span className="text-[9px] text-primary">หมดอายุแล้ว</span>}
+                          {currentUser.role==='global_admin'&&u.role!=='global_admin'&&(
+                            <button onClick={()=>{setLimitUser(u);setSelectedDuration(u.access_duration||'unlimited')}} className="text-[9px] text-blue-400 hover:underline mt-0.5">ตั้งค่า</button>
+                          )}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
                         <button onClick={()=>setEditUser({...u})} className="p-1.5 hover:bg-blue-50 text-blue-400 rounded-lg" title="แก้ไข"><span className="material-icons text-sm">edit</span></button>
                         {u.approved?<button onClick={()=>doAction(()=>api.revokeUser(u.username,currentUser),'ระงับผู้ใช้แล้ว')} className="p-1.5 hover:bg-yellow-50 text-warning rounded-lg"><span className="material-icons text-sm">block</span></button>:
@@ -243,7 +322,7 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
                       </div>
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table></div>
           )}
@@ -260,6 +339,31 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
             <div className="flex justify-end gap-2 mt-5">
               <button onClick={()=>setEditUser(null)} className="px-4 py-2 text-sm font-bold text-slate-400 border border-slate-200 dark:border-slate-600 rounded-xl">ยกเลิก</button>
               <button onClick={()=>doAction(()=>api.editUser(editUser.username,editUser.name,editUser._newPw||'',currentUser),'แก้ไขข้อมูลแล้ว').then(()=>setEditUser(null))} className="px-4 py-2 text-sm font-bold bg-secondary text-white rounded-xl">บันทึก</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {limitUser&&currentUser.role==='global_admin'&&(
+        <div className="fixed inset-0 bg-black/60 z-[9100] flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-fadeIn">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center"><span className="material-icons text-secondary">schedule</span></div>
+              <div><h3 className="font-bold text-secondary dark:text-white font-display">ตั้งค่าระยะเวลาการใช้งาน</h3>
+                <p className="text-xs text-slate-400">@{limitUser.username}</p></div>
+            </div>
+            <div className="space-y-2 mb-5">
+              {([['day','รายวัน (1 วัน)','today'],['month','รายเดือน (30 วัน)','calendar_month'],['year','รายปี (365 วัน)','event'],['unlimited','ไม่จำกัดเวลา','all_inclusive']] as const).map(([val,label,icon])=>(
+                <button key={val} onClick={()=>setSelectedDuration(val)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all ${selectedDuration===val?'border-secondary bg-blue-50 dark:bg-blue-900/20 text-secondary':'border-slate-100 dark:border-slate-700 text-slate-500 hover:border-slate-200'}`}>
+                  <span className="material-icons text-base">{icon}</span>{label}
+                  {selectedDuration===val&&<span className="material-icons text-base ml-auto">check_circle</span>}
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] text-slate-400 mb-4 text-center">การตั้งค่าใหม่จะเริ่มนับจากวันนี้</p>
+            <div className="flex justify-end gap-2">
+              <button onClick={()=>setLimitUser(null)} className="px-4 py-2 text-sm font-bold text-slate-400 border border-slate-200 dark:border-slate-600 rounded-xl">ยกเลิก</button>
+              <button onClick={()=>doAction(()=>api.setUserLimit(limitUser.username,selectedDuration,currentUser),'ตั้งค่าระยะเวลาแล้ว').then(()=>setLimitUser(null))} className="px-4 py-2 text-sm font-bold bg-secondary text-white rounded-xl">บันทึก</button>
             </div>
           </div>
         </div>
@@ -1198,6 +1302,7 @@ export default function App() {
   const [locations,setLocations]=useState<any[]>([])
   const [toasts,setToasts]=useState<ToastItem[]>([])
   const [showAdmin,setShowAdmin]=useState(false)
+  const [showExpModal,setShowExpModal]=useState(false)
 
   // restore session + page จาก sessionStorage หลัง client mount เท่านั้น
   useEffect(()=>{
@@ -1239,11 +1344,24 @@ export default function App() {
   const handleLogout=()=>{
     setCurrentUser(null)
     setPage('home')
+    setShowExpModal(false)
     try{sessionStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(PAGE_KEY)}catch{}
-    addToast('ออกจากระบบแล้ว','info')
+    addToast('à¸­à¸­à¸à¸à¸²à¸à¸£à¸°à¸à¸à¹à¸à¹à¸§','info')
   }
 
+  // ââ Check access expiration whenever currentUser changes âââââââââââââââââââ
+  useEffect(()=>{
+    if(!currentUser||currentUser.role==='global_admin')return
+    const expired=isAccessExpired(currentUser.access_until)
+    const daysLeft=getDaysRemaining(currentUser.access_until)
+    // Show modal if expired OR â¤ 7 days remaining
+    if(expired||(daysLeft!==null&&daysLeft<=7))setShowExpModal(true)
+  },[currentUser])
+
   if(!currentUser)return(<><AuthPage onLogin={handleLogin} addToast={addToast}/><Toast toasts={toasts}/></>)
+
+  // Block expired users from using the app (show only modal + logout)
+  const expired=isAccessExpired(currentUser.access_until)
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors">
@@ -1257,6 +1375,9 @@ export default function App() {
       <footer className="py-8 border-t border-slate-100 dark:border-slate-800 text-center text-slate-400 text-[9px] uppercase tracking-widest font-bold">© 2026 ระบบจัดการส่งจดหมาย — PostOffice</footer>
       <Toast toasts={toasts}/>
       {showAdmin&&canManage(currentUser?.role||'')&&<AdminPanel currentUser={currentUser} addToast={addToast} onClose={()=>setShowAdmin(false)}/>}
+      {showExpModal&&currentUser&&<ExpirationModal user={currentUser} onClose={()=>setShowExpModal(false)} onLogout={handleLogout}/>}
+      {/* Overlay to block expired users from interacting while modal shows */}
+      {expired&&!showExpModal&&<div className="fixed inset-0 bg-black/40 z-[9990]" onClick={()=>setShowExpModal(true)}/>}
     </div>
   )
 }
