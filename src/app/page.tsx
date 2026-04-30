@@ -221,6 +221,118 @@ function AuthPage({ onLogin, addToast }: { onLogin:(u:SessionUser)=>void; addToa
   )
 }
 
+// ── Admin Chat Panel (shown inside AdminPanel's chat tab) ─────────────────────
+function AdminChatPanel({ currentUser }: { currentUser: SessionUser }) {
+  const [allMsgs, setAllMsgs]   = useState<ChatMsg[]>([])
+  const [activeRoom, setActiveRoom] = useState<string|null>(null)
+  const [input, setInput]       = useState('')
+  const [sending, setSending]   = useState(false)
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  const fetchAll = useCallback(async () => {
+    try {
+      const res  = await fetch('/api/chat?admin=1')
+      const data: ChatMsg[] = await res.json()
+      setAllMsgs(data)
+    } catch {}
+  }, [])
+
+  useEffect(() => { fetchAll(); const t = setInterval(fetchAll, 6000); return () => clearInterval(t) }, [fetchAll])
+
+  // group by room
+  const rooms = useMemo(() => {
+    const map = new Map<string, ChatMsg[]>()
+    allMsgs.forEach(m => { if (!map.has(m.room)) map.set(m.room, []); map.get(m.room)!.push(m) })
+    return Array.from(map.entries())
+      .map(([r, ms]) => ({ room: r, msgs: ms.sort((a,b) => a.id - b.id) }))
+      .sort((a,b) => {
+        const la = a.msgs[a.msgs.length-1]?.created_at || ''
+        const lb = b.msgs[b.msgs.length-1]?.created_at || ''
+        return lb.localeCompare(la)
+      })
+  }, [allMsgs])
+
+  useEffect(() => { if (!activeRoom && rooms.length > 0) setActiveRoom(rooms[0].room) }, [rooms, activeRoom])
+
+  const activeMsgs = useMemo(() => rooms.find(r => r.room === activeRoom)?.msgs || [], [rooms, activeRoom])
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [activeMsgs])
+
+  const getRoomLabel = (r: string) => r.startsWith('guest:') ? `ผู้เยี่ยมชม (${r.slice(6,12)})` : r
+
+  const send = async () => {
+    if (!input.trim() || !activeRoom || sending) return
+    setSending(true)
+    try {
+      await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room: activeRoom, sender: currentUser.name, sender_role: 'global_admin', message: input.trim() }),
+      })
+      setInput('')
+      await fetchAll()
+    } catch {}
+    setSending(false)
+  }
+
+  const fmt = (iso: string) => { try { return new Date(iso).toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' }) } catch { return '' } }
+
+  return (
+    <div className="flex gap-4" style={{ height: '400px' }}>
+      {/* Room list */}
+      <div className="w-48 flex-shrink-0 border border-slate-100 dark:border-slate-700 rounded-2xl overflow-y-auto">
+        {rooms.length === 0
+          ? <div className="p-4 text-center text-xs text-slate-400">ยังไม่มีข้อความ</div>
+          : rooms.map(({ room: r, msgs: ms }) => (
+            <button key={r} onClick={() => setActiveRoom(r)}
+              className={`w-full text-left px-3 py-2.5 border-b border-slate-50 dark:border-slate-700 transition-all ${activeRoom===r?'bg-blue-50 dark:bg-blue-900/20':'hover:bg-slate-50 dark:hover:bg-slate-700/30'}`}>
+              <p className={`text-xs font-bold truncate ${activeRoom===r?'text-secondary':''}`}>{getRoomLabel(r)}</p>
+              <p className="text-[10px] text-slate-400 truncate">{ms[ms.length-1]?.message || ''}</p>
+              <p className="text-[9px] text-slate-300">{fmt(ms[ms.length-1]?.created_at || '')}</p>
+            </button>
+          ))
+        }
+      </div>
+
+      {/* Messages + input */}
+      <div className="flex-1 flex flex-col border border-slate-100 dark:border-slate-700 rounded-2xl overflow-hidden">
+        {!activeRoom
+          ? <div className="flex-1 flex items-center justify-center text-sm text-slate-400">เลือกห้องสนทนาทางซ้าย</div>
+          : <>
+            <div className="px-4 py-2 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-100 dark:border-slate-700 flex-shrink-0">
+              <p className="text-xs font-bold text-secondary">{getRoomLabel(activeRoom)}</p>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-2" style={{ background: '#f8fafc' }}>
+              {activeMsgs.map(m => {
+                const isMine = m.sender_role === 'global_admin'
+                return (
+                  <div key={m.id} className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`}>
+                    {!isMine && <span className="text-[9px] text-slate-400 mb-0.5 px-1">{m.sender}</span>}
+                    <div className={`max-w-[75%] px-3 py-1.5 rounded-2xl text-sm ${isMine ? 'text-white rounded-br-sm' : 'bg-white border border-slate-100 text-slate-700 rounded-bl-sm'}`}
+                      style={isMine ? { background: 'linear-gradient(135deg,#002B5B,#1a4a8f)' } : {}}>
+                      {m.message}
+                    </div>
+                    <span className="text-[9px] text-slate-300 px-1 mt-0.5">{fmt(m.created_at)}</span>
+                  </div>
+                )
+              })}
+              <div ref={bottomRef} />
+            </div>
+            <div className="flex gap-2 p-3 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 flex-shrink-0">
+              <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key==='Enter'&&send()}
+                placeholder="ตอบกลับ..." className="flex-1 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-1.5 text-sm outline-none focus:border-secondary transition-all dark:text-white" disabled={sending}/>
+              <button onClick={send} disabled={sending || !input.trim()}
+                className="px-4 py-1.5 rounded-xl text-sm font-bold text-white disabled:opacity-40 transition-all"
+                style={{ background: 'linear-gradient(135deg,#002B5B,#EE2D24)' }}>
+                {sending ? '...' : 'ส่ง'}
+              </button>
+            </div>
+          </>
+        }
+      </div>
+    </div>
+  )
+}
+
 // ── Admin Panel ───────────────────────────────────────────────────────────────
 function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser; addToast:(m:string,t?:string)=>void; onClose:()=>void }) {
   const [users,setUsers]=useState<any[]>([])
@@ -254,7 +366,7 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
           <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full"><span className="material-icons">close</span></button>
         </div>
         <div className="flex border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
-          {[{key:'users',label:'ผู้ใช้ทั้งหมด',icon:'people',count:users.length},{key:'pending',label:'รออนุมัติ',icon:'pending',count:pending.length}].map(t=>(
+          {[{key:'users',label:'ผู้ใช้ทั้งหมด',icon:'people',count:users.length},{key:'pending',label:'รออนุมัติ',icon:'pending',count:pending.length},{key:'chat',label:'แชท',icon:'chat',count:0}].map(t=>(
             <button key={t.key} onClick={()=>setTab(t.key)} className={`flex items-center gap-2 px-6 py-3 text-sm font-bold border-b-2 transition-all ${tab===t.key?'border-primary text-primary':'border-transparent text-slate-400'}`}>
               <span className="material-icons text-base">{t.icon}</span>{t.label}
               {t.count>0&&<span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${t.key==='pending'&&t.count>0?'bg-primary text-white':'bg-slate-200 text-slate-600'}`}>{t.count}</span>}
@@ -263,6 +375,7 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
         </div>
         <div className="p-6">
           {loading&&<div className="text-center py-10 text-slate-400"><div className="spinner" style={{borderTopColor:'#94a3b8',borderColor:'rgba(148,163,184,.3)',margin:'0 auto 8px'}}></div>โหลดข้อมูล...</div>}
+          {tab==='chat'&&<AdminChatPanel currentUser={currentUser}/>}
           {!loading&&tab==='pending'&&(
             <div>{pending.length===0?<div className="text-center py-10 text-slate-400"><span className="material-icons text-4xl block mb-2">check_circle</span>ไม่มีรายการรออนุมัติ</div>:
               <div className="space-y-3">{pending.map(u=>(
@@ -1311,6 +1424,234 @@ function TrackPage({ addToast, currentUser }:any) {
   )
 }
 
+// ── Chat Widget ───────────────────────────────────────────────────────────────
+// Generates a stable guest ID for unauthenticated visitors (stored in sessionStorage)
+function getGuestId(): string {
+  try {
+    let id = sessionStorage.getItem('chat_guest_id')
+    if (!id) { id = 'guest:' + Math.random().toString(36).slice(2, 10); sessionStorage.setItem('chat_guest_id', id) }
+    return id
+  } catch { return 'guest:anon' }
+}
+
+type ChatMsg = { id: number; room: string; sender: string; sender_role: string; message: string; created_at: string }
+
+function ChatWidget({ currentUser }: { currentUser: SessionUser | null }) {
+  const [open, setOpen]       = useState(false)
+  const [msgs, setMsgs]       = useState<ChatMsg[]>([])
+  const [input, setInput]     = useState('')
+  const [sending, setSending] = useState(false)
+  const [unread, setUnread]   = useState(0)
+  const [adminRooms, setAdminRooms] = useState<{room:string;msgs:ChatMsg[]}[]>([])
+  const [activeRoom, setActiveRoom] = useState<string|null>(null)
+  const bottomRef = useRef<HTMLDivElement>(null)
+  const pollRef   = useRef<ReturnType<typeof setInterval>|null>(null)
+
+  const isAdmin = currentUser?.role === 'global_admin'
+  const room    = currentUser ? currentUser.username : getGuestId()
+  const senderName = currentUser ? currentUser.name : 'ผู้เยี่ยมชม'
+  const senderRole = currentUser?.role || 'guest'
+
+  // ── fetch messages ──
+  const fetchMsgs = useCallback(async () => {
+    try {
+      if (isAdmin) {
+        const res = await fetch('/api/chat?admin=1')
+        const all: ChatMsg[] = await res.json()
+        // group by room
+        const map = new Map<string, ChatMsg[]>()
+        all.forEach(m => { if (!map.has(m.room)) map.set(m.room, []); map.get(m.room)!.push(m) })
+        const rooms = Array.from(map.entries())
+          .map(([r, ms]) => ({ room: r, msgs: ms.sort((a,b)=>a.id-b.id) }))
+          .sort((a,b) => {
+            const la = a.msgs[a.msgs.length-1]?.created_at || ''
+            const lb = b.msgs[b.msgs.length-1]?.created_at || ''
+            return lb.localeCompare(la)
+          })
+        setAdminRooms(rooms)
+        if (!activeRoom && rooms.length > 0) setActiveRoom(rooms[0].room)
+        if (activeRoom) {
+          const cur = rooms.find(r => r.room === activeRoom)
+          if (cur) setMsgs(cur.msgs)
+        }
+      } else {
+        const res = await fetch(`/api/chat?room=${encodeURIComponent(room)}`)
+        const data: ChatMsg[] = await res.json()
+        setMsgs(prev => {
+          if (!open) {
+            const newAdminReplies = data.filter(m => m.sender_role === 'global_admin' && !prev.find(p => p.id === m.id))
+            if (newAdminReplies.length > 0) setUnread(u => u + newAdminReplies.length)
+          }
+          return data
+        })
+      }
+    } catch {}
+  }, [room, isAdmin, open, activeRoom])
+
+  // scroll to bottom
+  useEffect(() => { if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [msgs, open])
+
+  // poll every 5s while open, or every 30s while closed (for unread badge)
+  useEffect(() => {
+    fetchMsgs()
+    if (pollRef.current) clearInterval(pollRef.current)
+    pollRef.current = setInterval(fetchMsgs, open ? 5000 : 30000)
+    return () => { if (pollRef.current) clearInterval(pollRef.current) }
+  }, [open, fetchMsgs])
+
+  // update msgs when activeRoom changes (admin)
+  useEffect(() => {
+    if (isAdmin && activeRoom) {
+      const cur = adminRooms.find(r => r.room === activeRoom)
+      if (cur) setMsgs(cur.msgs)
+    }
+  }, [activeRoom, adminRooms, isAdmin])
+
+  const handleOpen = () => { setOpen(true); setUnread(0) }
+
+  const send = async () => {
+    if (!input.trim() || sending) return
+    setSending(true)
+    const targetRoom = isAdmin && activeRoom ? activeRoom : room
+    try {
+      await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room: targetRoom, sender: senderName, sender_role: senderRole, message: input.trim() }),
+      })
+      setInput('')
+      await fetchMsgs()
+    } catch {}
+    setSending(false)
+  }
+
+  const formatTime = (iso: string) => {
+    try { return new Date(iso).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) } catch { return '' }
+  }
+
+  const getRoomLabel = (r: string) => r.startsWith('guest:') ? `ผู้เยี่ยมชม (${r.slice(6,12)})` : r
+
+  return (
+    <>
+      {/* ── Floating Button ── */}
+      <button
+        onClick={handleOpen}
+        className="fixed bottom-6 right-6 z-[9800] w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+        style={{ background: 'linear-gradient(135deg, #002B5B, #EE2D24)' }}
+        title="แชทกับผู้ดูแลระบบ"
+      >
+        <span className="material-icons text-white text-2xl">{open ? 'close' : 'chat'}</span>
+        {unread > 0 && !open && (
+          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-black flex items-center justify-center animate-pulse">
+            {unread > 9 ? '9+' : unread}
+          </span>
+        )}
+      </button>
+
+      {/* ── Chat Panel ── */}
+      {open && (
+        <div className="fixed bottom-24 right-6 z-[9800] w-80 md:w-96 flex flex-col rounded-3xl shadow-2xl overflow-hidden animate-fadeIn"
+          style={{ height: '480px', background: 'white', border: '1px solid #e2e8f0' }}>
+
+          {/* Header */}
+          <div className="flex items-center gap-3 px-4 py-3 text-white flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg, #002B5B, #1a3a6b)' }}>
+            <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
+              <span className="material-icons text-white text-lg">support_agent</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-sm leading-tight">
+                {isAdmin ? 'แชทจากผู้ใช้งาน' : 'ติดต่อผู้ดูแลระบบ'}
+              </p>
+              <p className="text-[10px] text-blue-200 truncate">
+                {isAdmin ? `${adminRooms.length} ห้องสนทนา` : 'global_admin พร้อมรับคำถามของคุณ'}
+              </p>
+            </div>
+            <button onClick={() => setOpen(false)} className="p-1 hover:bg-white/10 rounded-full">
+              <span className="material-icons text-white text-base">close</span>
+            </button>
+          </div>
+
+          {/* Admin: room list sidebar */}
+          {isAdmin && (
+            <div className="flex border-b border-slate-100 bg-slate-50 overflow-x-auto flex-shrink-0" style={{ maxHeight: '80px' }}>
+              {adminRooms.length === 0
+                ? <p className="text-xs text-slate-400 p-3">ยังไม่มีข้อความ</p>
+                : adminRooms.map(({ room: r, msgs: ms }) => (
+                  <button key={r} onClick={() => setActiveRoom(r)}
+                    className={`flex-shrink-0 px-3 py-2 text-left border-b-2 transition-all ${activeRoom===r ? 'border-secondary text-secondary bg-white' : 'border-transparent text-slate-400 hover:bg-white'}`}
+                    style={{ minWidth: '120px' }}>
+                    <p className="text-[10px] font-bold truncate">{getRoomLabel(r)}</p>
+                    <p className="text-[9px] text-slate-400 truncate">{ms[ms.length-1]?.message || ''}</p>
+                  </button>
+                ))
+              }
+            </div>
+          )}
+
+          {/* Messages area */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ background: '#f8fafc' }}>
+            {msgs.length === 0 && (
+              <div className="text-center py-8">
+                <span className="material-icons text-4xl text-slate-200 block mb-2">chat_bubble_outline</span>
+                <p className="text-xs text-slate-400 font-bold">
+                  {isAdmin ? (activeRoom ? 'ยังไม่มีข้อความในห้องนี้' : 'เลือกห้องสนทนา') : 'ส่งข้อความหาผู้ดูแลระบบได้เลย'}
+                </p>
+                {!isAdmin && <p className="text-[10px] text-slate-300 mt-1">เราจะตอบกลับโดยเร็วที่สุด</p>}
+              </div>
+            )}
+            {msgs.map(m => {
+              const isMine = isAdmin ? m.sender_role === 'global_admin' : m.sender_role !== 'global_admin'
+              return (
+                <div key={m.id} className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`}>
+                  {!isMine && (
+                    <span className="text-[9px] text-slate-400 font-bold mb-1 px-1">
+                      {isAdmin ? m.sender : 'ผู้ดูแลระบบ'}
+                    </span>
+                  )}
+                  <div className={`max-w-[80%] px-3 py-2 rounded-2xl text-sm leading-relaxed shadow-sm ${
+                    isMine
+                      ? 'text-white rounded-br-sm'
+                      : 'bg-white text-slate-700 rounded-bl-sm border border-slate-100'
+                  }`}
+                    style={isMine ? { background: 'linear-gradient(135deg,#002B5B,#1a4a8f)' } : {}}>
+                    {m.message}
+                  </div>
+                  <span className="text-[9px] text-slate-300 mt-0.5 px-1">{formatTime(m.created_at)}</span>
+                </div>
+              )
+            })}
+            <div ref={bottomRef} />
+          </div>
+
+          {/* Input area */}
+          {(!isAdmin || activeRoom) && (
+            <div className="flex items-center gap-2 px-3 py-3 border-t border-slate-100 bg-white flex-shrink-0">
+              <input
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
+                placeholder={isAdmin ? `ตอบกลับ ${activeRoom ? getRoomLabel(activeRoom) : ''}...` : 'พิมพ์ข้อความ...'}
+                className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/20 transition-all"
+                disabled={sending}
+                autoFocus
+              />
+              <button onClick={send} disabled={sending || !input.trim()}
+                className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-40"
+                style={{ background: 'linear-gradient(135deg,#002B5B,#EE2D24)' }}>
+                {sending
+                  ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  : <span className="material-icons text-white text-base">send</span>
+                }
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </>
+  )
+}
+
 // ── App Root ──────────────────────────────────────────────────────────────────
 export default function App() {
   // ── restore session + page จาก sessionStorage เมื่อ refresh ─────────────
@@ -1378,7 +1719,7 @@ export default function App() {
     if(expired||(daysLeft!==null&&daysLeft<=7))setShowExpModal(true)
   },[currentUser])
 
-  if(!currentUser)return(<><AuthPage onLogin={handleLogin} addToast={addToast}/><Toast toasts={toasts}/></>)
+  if(!currentUser)return(<><AuthPage onLogin={handleLogin} addToast={addToast}/><Toast toasts={toasts}/><ChatWidget currentUser={null}/></>)
 
   // Block expired users from using the app (show only modal + logout)
   const expired=isAccessExpired(currentUser.access_until)
@@ -1398,6 +1739,7 @@ export default function App() {
       {showExpModal&&currentUser&&<ExpirationModal user={currentUser} onClose={()=>setShowExpModal(false)} onLogout={handleLogout}/>}
       {/* Overlay to block expired users from interacting while modal shows */}
       {expired&&!showExpModal&&<div className="fixed inset-0 bg-black/40 z-[9990]" onClick={()=>setShowExpModal(true)}/>}
+      <ChatWidget currentUser={currentUser}/>
     </div>
   )
 }
