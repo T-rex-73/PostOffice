@@ -264,7 +264,7 @@ function ARYellow({ r, info, isLast }: { r: EnvelopeData; info: OfficeInfo; show
 
   return (
     <div style={{
-      width: '148mm', height: '210mm',
+      width: '148mm', height: '200mm',
       pageBreakAfter: isLast ? 'auto' : 'always',
       breakAfter:     isLast ? 'auto' : 'page',
       boxSizing: 'border-box',
@@ -312,7 +312,7 @@ function ARYellow({ r, info, isLast }: { r: EnvelopeData; info: OfficeInfo; show
         {addrLine1 && <div>{addrLine1}</div>}
         {addrLine2 && <div>{addrLine2}</div>}
         <div>ที่ {r.book_no}&nbsp;&nbsp;&nbsp;{r.owner}</div>
-        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold', letterSpacing: '0.29em', marginLeft: '38mm', marginTop: '7mm' }}>
+        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold', letterSpacing: '0.29em', marginLeft: '38mm', marginTop: '22mm' }}>
           {info.office_zip ? formatZipSpaced(info.office_zip) : (zip || r.zip)}
         </div>
       </div>
@@ -346,7 +346,7 @@ const lowerZipFs  = '24pt'
 
   return (
     <div style={{
-      width: '148mm', height: '210mm',
+      width: '148mm', height: '200mm',
       pageBreakAfter: isLast ? 'auto' : 'always',
       breakAfter:     isLast ? 'auto' : 'page',
       boxSizing: 'border-box',
@@ -409,7 +409,7 @@ const lowerZipFs  = '24pt'
         {addrLine1 && <div>{addrLine1}</div>}
         {addrLine2 && <div>{addrLine2}</div>}
         <div>ที่ {r.book_no}&nbsp;&nbsp;&nbsp;{r.owner}</div>
-        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold',paddingLeft: '38mm', letterSpacing: '0.26em', marginTop: '0.5mm' }}>
+        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold',paddingLeft: '38mm', letterSpacing: '0.26em', marginTop: '17mm' }}>
           {info.office_zip ? formatZipSpaced(info.office_zip) : (zip || r.zip)}
         </div>
       </div>
