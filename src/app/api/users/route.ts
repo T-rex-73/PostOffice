@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
     let query = supabaseAdmin
       .from('users')
-      .select('name, username, role, approved, created_at, office_name, access_duration, access_start, access_until, access_month_count')
+      .select('name, username, role, approved, created_at, office_name, access_duration, access_start, access_until, access_month_count, access_day_count, access_year_count')
       .order('office_name', { ascending: true })
       .order('created_at',  { ascending: true })
 
@@ -120,17 +120,21 @@ export async function PATCH(req: NextRequest) {
         let accessUntil: string | null = null
         // month_count: how many months (only relevant when duration === 'month')
         const monthCount = typeof rest.month_count === 'number' && rest.month_count > 0 ? Math.floor(rest.month_count) : 1
+        const dayCount = typeof rest.day_count === 'number' && rest.day_count > 0 ? Math.floor(rest.day_count) : 1
+        const yearCount = typeof rest.year_count === 'number' && rest.year_count > 0 ? Math.floor(rest.year_count) : 1
         if (duration === 'day') {
-          const d = new Date(now); d.setDate(d.getDate() + 1); accessUntil = d.toISOString()
+          const d = new Date(now); d.setDate(d.getDate() + dayCount); accessUntil = d.toISOString()
         } else if (duration === 'month') {
           const d = new Date(now); d.setMonth(d.getMonth() + monthCount); accessUntil = d.toISOString()
         } else if (duration === 'year') {
-          const d = new Date(now); d.setFullYear(d.getFullYear() + 1); accessUntil = d.toISOString()
+          const d = new Date(now); d.setFullYear(d.getFullYear() + yearCount); accessUntil = d.toISOString()
         }
         // 'unlimited' → accessUntil stays null
         update = {
           access_duration: duration,
+          access_day_count: duration === 'day' ? dayCount : null,
           access_month_count: duration === 'month' ? monthCount : null,
+          access_year_count: duration === 'year' ? yearCount : null,
           access_start: now.toISOString(),
           access_until: accessUntil,
         }
