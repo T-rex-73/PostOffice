@@ -25,7 +25,7 @@ function Toast({ toasts }: { toasts: ToastItem[] }) {
   return (
     <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3">
       {toasts.map(t => (
-        <div key={t.id} className={`flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl font-bold text-white text-sm animate-fadeIn
+        <div key={t.id} className={`flex items-center gap-3 px-5 py-3 rounded-xl-sm font-bold text-white text-sm animate-fadeIn
           ${t.type==='success'?'bg-success':t.type==='error'?'bg-primary':'bg-info'}`}>
           <span className="material-icons text-base">{t.type==='success'?'check_circle':t.type==='error'?'error':'info'}</span>
           {t.message}
@@ -58,15 +58,15 @@ function ExpirationModal({ user, onClose, onLogout }: { user: SessionUser; onClo
   if (expired) {
     return (
       <div className="fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-sm animate-fadeIn text-center p-8">
-          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-            <span className="material-icons text-3xl text-primary">lock</span>
+        <div className="bg-white dark:bg-slate-800 rounded-xl-sm w-full max-w-sm animate-fadeIn text-center p-8">
+          <div className="w-16 h-16 rounded-full bg-[#FFB6B9]/30 flex items-center justify-center mx-auto mb-4">
+            <span className="material-icons text-2xl text-[#FFB6B9]">lock</span>
           </div>
-          <h2 className="text-xl font-black text-slate-800 dark:text-white font-display mb-2">หมดอายุการใช้งานแล้ว</h2>
+          <h2 className="text-base font-semibold text-slate-700 dark:text-white mb-2">หมดอายุการใช้งานแล้ว</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">บัญชีของคุณหมดอายุเมื่อ</p>
           <p className="font-bold text-primary mb-5">{expDate}</p>
           <p className="text-xs text-slate-400 mb-6">กรุณาติดต่อผู้ดูแลระบบเพื่อต่ออายุการใช้งาน</p>
-          <button onClick={onLogout} className="w-full py-3 bg-primary text-white font-bold rounded-2xl text-sm">ออกจากระบบ</button>
+          <button onClick={onLogout} className="w-full py-3 bg-slate-800 text-white font-bold rounded-xl text-sm">ออกจากระบบ</button>
         </div>
       </div>
     )
@@ -75,17 +75,17 @@ function ExpirationModal({ user, onClose, onLogout }: { user: SessionUser; onClo
   // Warning: show when ≤ 7 days left
   return (
     <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-sm animate-fadeIn text-center p-8">
-        <div className="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4">
-          <span className="material-icons text-3xl text-warning">schedule</span>
+      <div className="bg-white dark:bg-slate-800 rounded-xl-sm w-full max-w-sm animate-fadeIn text-center p-8">
+        <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+          <span className="material-icons text-2xl text-amber-400">schedule</span>
         </div>
-        <h2 className="text-xl font-black text-slate-800 dark:text-white font-display mb-2">ใกล้หมดอายุการใช้งาน</h2>
+        <h2 className="text-base font-semibold text-slate-700 dark:text-white mb-2">ใกล้หมดอายุการใช้งาน</h2>
         <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">บัญชีของคุณจะหมดอายุใน</p>
-        <p className="font-black text-4xl text-warning mb-1">{daysLeft}</p>
+        <p className="font-bold text-3xl text-warning mb-1">{daysLeft}</p>
         <p className="text-sm font-bold text-slate-500 mb-1">วัน</p>
         <p className="text-xs text-slate-400 mb-6">วันหมดอายุ: <span className="font-bold text-slate-600 dark:text-slate-300">{expDate}</span></p>
         <p className="text-xs text-slate-400 mb-5">กรุณาติดต่อผู้ดูแลระบบเพื่อต่ออายุก่อนหมดเวลา</p>
-        <button onClick={onClose} className="w-full py-3 bg-secondary text-white font-bold rounded-2xl text-sm">รับทราบ</button>
+        <button onClick={onClose} className="w-full py-3 bg-secondary text-white font-bold rounded-xl text-sm">รับทราบ</button>
       </div>
     </div>
   )
@@ -154,21 +154,21 @@ function AuthPage({ onLogin, addToast }: { onLogin:(u:SessionUser)=>void; addToa
       <div className="auth-card animate-fadeIn" style={{maxHeight:'90vh',overflowY:'auto'}}>
         {/* Logo */}
         <div className="text-center mb-5">
-          <img src="/logo.png" alt="PostOffice Logo" className="w-24 h-24 mx-auto mb-3 rounded-full shadow-lg object-cover"/>
-          <span className="text-primary font-black text-2xl font-display leading-none">PostOffice</span>
+          <img src="/logo.png" alt="PostOffice Logo" className="w-24 h-24 mx-auto mb-3 rounded-full  object-cover"/>
+          <span className="text-primary font-semibold text-xl leading-none tracking-tight">PostOffice</span>
           <div className="text-[9px] text-secondary font-bold tracking-widest uppercase mt-1">ระบบบริหารจัดการงานไปรษณีย์</div>
         </div>
-        <div className="flex rounded-xl overflow-hidden mb-5 p-1 bg-slate-100">
-          <button onClick={()=>setTab('login')}    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${tab==='login'?'tab-active':'tab-inactive'}`}>เข้าสู่ระบบ</button>
-          <button onClick={()=>setTab('register')} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${tab==='register'?'tab-active':'tab-inactive'}`}>สมัครสมาชิก</button>
+        <div className="flex mb-5 border-b border-slate-100">
+          <button onClick={()=>setTab('login')}    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${tab==='login'?'border-b-2 border-slate-800 text-slate-800 pb-2':'text-slate-400 pb-2'}`}>เข้าสู่ระบบ</button>
+          <button onClick={()=>setTab('register')} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${tab==='register'?'border-b-2 border-slate-800 text-slate-800 pb-2':'text-slate-400 pb-2'}`}>สมัครสมาชิก</button>
         </div>
 
         {tab==='login'?(
           <div className="space-y-4">
             {/* Login Mode Toggle */}
             <div className="flex gap-2 bg-slate-50 p-1 rounded-xl border border-slate-100">
-              <button type="button" onClick={()=>setLoginMode('username')} className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1 transition-all ${loginMode==='username'?'bg-white shadow text-secondary':'text-slate-400'}`}><span className="material-icons text-xs">person</span>ชื่อผู้ใช้</button>
-              <button type="button" onClick={()=>setLoginMode('email')} className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1 transition-all ${loginMode==='email'?'bg-white shadow text-secondary':'text-slate-400'}`}><span className="material-icons text-xs">email</span>อีเมล</button>
+              <button type="button" onClick={()=>setLoginMode('username')} className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1 transition-all ${loginMode==='username'?'text-slate-800':'text-slate-400'}`}><span className="material-icons text-xs">person</span>ชื่อผู้ใช้</button>
+              <button type="button" onClick={()=>setLoginMode('email')} className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1 transition-all ${loginMode==='email'?'text-slate-800':'text-slate-400'}`}><span className="material-icons text-xs">email</span>อีเมล</button>
             </div>
             <div><label className={lbl}>{loginMode==='email'?'อีเมล':'ชื่อผู้ใช้'}</label>
               <input value={lf.username} onChange={e=>setLf({...lf,username:e.target.value})} onKeyDown={e=>e.key==='Enter'&&handleLogin()} className="input-style text-sm" placeholder={loginMode==='email'?'email@example.com':'username'} autoComplete={loginMode==='email'?'email':'username'} type={loginMode==='email'?'email':'text'}/>
@@ -181,18 +181,18 @@ function AuthPage({ onLogin, addToast }: { onLogin:(u:SessionUser)=>void; addToa
             </div>
             <div className="flex items-center justify-between py-1">
               <label className="flex items-center gap-2.5 cursor-pointer select-none" onClick={()=>setRm(v=>!v)}>
-                <div className="toggle-track" style={{background:rm?'#002B5B':'#cbd5e1'}}><div className="toggle-thumb" style={{transform:rm?'translateX(16px)':'translateX(0)'}}/></div>
+                <div className="toggle-track" style={{background:rm?'#8AC6D1':'#e2e8f0'}}><div className="toggle-thumb" style={{transform:rm?'translateX(16px)':'translateX(0)'}}/></div>
                 <span className="text-xs font-bold text-slate-500">จดจำรหัสผ่าน</span>
               </label>
             </div>
-            <button onClick={handleLogin} disabled={loading} className="w-full bg-primary text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-60 mt-2">
+            <button onClick={handleLogin} disabled={loading} className="w-full bg-slate-800 text-white py-2.5 rounded-lg font-medium text-sm flex items-center justify-center gap-2 disabled:opacity-60 mt-2">
               {loading?<><div className="spinner"></div>กำลังเข้าสู่ระบบ...</>:<><span className="material-icons text-base">login</span>เข้าสู่ระบบ</>}
             </button>
           </div>
         ):(
           <div className="space-y-4">
             <div className="pb-4 border-b border-slate-100">
-              <div className="text-xs font-bold text-secondary mb-3 flex items-center gap-1"><span className="material-icons text-xs">person</span>ข้อมูลบัญชี</div>
+              <div className="text-xs font-medium text-slate-500 mb-3 flex items-center gap-1"><span className="material-icons text-xs">person</span>ข้อมูลบัญชี</div>
               <div className="space-y-3">
                 <div><label className={lbl}>ชื่อ-นามสกุล</label><input value={rf.name} onChange={e=>setRf({...rf,name:e.target.value})} className="input-style text-sm" placeholder="ชื่อเต็ม"/></div>
                 <div><label className={lbl}>ชื่อผู้ใช้</label><input value={rf.username} onChange={e=>setRf({...rf,username:e.target.value})} className="input-style text-sm" placeholder="username (ภาษาอังกฤษ)" autoComplete="username"/></div>
@@ -207,11 +207,11 @@ function AuthPage({ onLogin, addToast }: { onLogin:(u:SessionUser)=>void; addToa
                 </div>
               </div>
             </div>
-            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-xs text-blue-700 dark:text-blue-300 flex items-start gap-2">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-xs border border-slate-100 dark:border-slate-700 text-[#8AC6D1] dark:text-[#BBDED6] flex items-start gap-2">
               <span className="material-icons text-sm mt-0.5">info</span>
               <span>ขั้นตอนถัดไป: หลังกรอกข้อมูลบัญชี คุณจะถูกพาไปกรอก <strong>ข้อมูลสำนักงาน</strong> ในหน้าถัดไป</span>
             </div>
-            <button onClick={handleRegister} disabled={loading} className="w-full bg-secondary text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-60">
+            <button onClick={handleRegister} disabled={loading} className="w-full bg-secondary text-white py-2.5 rounded-lg font-medium text-sm flex items-center justify-center gap-2 disabled:opacity-60">
               {loading?<><div className="spinner"></div>กำลังตรวจสอบ...</>:<><span className="material-icons text-base">arrow_forward</span>ถัดไป: กรอกข้อมูลสำนักงาน</>}
             </button>
           </div>
@@ -279,12 +279,12 @@ function AdminChatPanel({ currentUser }: { currentUser: SessionUser }) {
   return (
     <div className="flex gap-4" style={{ height: '400px' }}>
       {/* Room list */}
-      <div className="w-48 flex-shrink-0 border border-slate-100 dark:border-slate-700 rounded-2xl overflow-y-auto">
+      <div className="w-48 flex-shrink-0 border border-slate-100 dark:border-slate-700 rounded-xl overflow-y-auto">
         {rooms.length === 0
           ? <div className="p-4 text-center text-xs text-slate-400">ยังไม่มีข้อความ</div>
           : rooms.map(({ room: r, msgs: ms }) => (
             <button key={r} onClick={() => setActiveRoom(r)}
-              className={`w-full text-left px-3 py-2.5 border-b border-slate-50 dark:border-slate-700 transition-all ${activeRoom===r?'bg-blue-50 dark:bg-blue-900/20':'hover:bg-slate-50 dark:hover:bg-slate-700/30'}`}>
+              className={`w-full text-left px-3 py-2.5 border-b border-slate-50 dark:border-slate-700 transition-all ${activeRoom===r?'bg-[#FAE3D9]/40 dark:bg-[#8AC6D1]/10':'hover:bg-slate-50 dark:hover:bg-slate-700/30'}`}>
               <p className={`text-xs font-bold truncate ${activeRoom===r?'text-secondary':''}`}>{getRoomLabel(r)}</p>
               <p className="text-[10px] text-slate-400 truncate">{ms[ms.length-1]?.message || ''}</p>
               <p className="text-[9px] text-slate-300">{fmt(ms[ms.length-1]?.created_at || '')}</p>
@@ -294,7 +294,7 @@ function AdminChatPanel({ currentUser }: { currentUser: SessionUser }) {
       </div>
 
       {/* Messages + input */}
-      <div className="flex-1 flex flex-col border border-slate-100 dark:border-slate-700 rounded-2xl overflow-hidden">
+      <div className="flex-1 flex flex-col border border-slate-100 dark:border-slate-700 rounded-xl overflow-hidden">
         {!activeRoom
           ? <div className="flex-1 flex items-center justify-center text-sm text-slate-400">เลือกห้องสนทนาทางซ้าย</div>
           : <>
@@ -307,8 +307,8 @@ function AdminChatPanel({ currentUser }: { currentUser: SessionUser }) {
                 return (
                   <div key={m.id} className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`}>
                     {!isMine && <span className="text-[9px] text-slate-400 mb-0.5 px-1">{m.sender}</span>}
-                    <div className={`max-w-[75%] px-3 py-1.5 rounded-2xl text-sm ${isMine ? 'text-white rounded-br-sm' : 'bg-white border border-slate-100 text-slate-700 rounded-bl-sm'}`}
-                      style={isMine ? { background: 'linear-gradient(135deg,#002B5B,#1a4a8f)' } : {}}>
+                    <div className={`max-w-[75%] px-3 py-1.5 rounded-xl text-sm ${isMine ? 'text-white rounded-br-sm' : 'bg-white border border-slate-100 text-slate-700 rounded-bl-sm'}`}
+                      style={isMine ? { background: 'linear-gradient(135deg,#8AC6D1,#BBDED6)' } : {}}>
                       {m.message}
                     </div>
                     <span className="text-[9px] text-slate-300 px-1 mt-0.5">{fmt(m.created_at)}</span>
@@ -319,10 +319,10 @@ function AdminChatPanel({ currentUser }: { currentUser: SessionUser }) {
             </div>
             <div className="flex gap-2 p-3 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 flex-shrink-0">
               <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key==='Enter'&&send()}
-                placeholder="ตอบกลับ..." className="flex-1 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-1.5 text-sm outline-none focus:border-secondary transition-all dark:text-white" disabled={sending}/>
+                placeholder="ตอบกลับ..." className="flex-1 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-1.5 text-sm outline-none focus:border-slate-400 transition-colors dark:text-white" disabled={sending}/>
               <button onClick={send} disabled={sending || !input.trim()}
                 className="px-4 py-1.5 rounded-xl text-sm font-bold text-white disabled:opacity-40 transition-all"
-                style={{ background: 'linear-gradient(135deg,#002B5B,#EE2D24)' }}>
+                style={{ background: 'linear-gradient(135deg,#8AC6D1,#FFB6B9)' }}>
                 {sending ? '...' : 'ส่ง'}
               </button>
             </div>
@@ -361,17 +361,17 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
   const pending=users.filter(u=>!u.approved)
   return (
     <div className="fixed inset-0 bg-black/50 z-[9000] flex items-start justify-center pt-10 px-4 overflow-y-auto">
-      <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-4xl mb-10 animate-fadeIn overflow-hidden">
-        <div className="bg-secondary text-white p-6 flex justify-between items-center">
-          <div><h2 className="text-xl font-bold font-display flex items-center gap-2"><span className="material-icons">admin_panel_settings</span>แผงผู้ดูแลระบบ</h2>
-            <p className="text-blue-200 text-xs mt-1">จัดการผู้ใช้งานและสิทธิ์เข้าถึง</p></div>
+      <div className="bg-white dark:bg-slate-800 rounded-xl-sm w-full max-w-4xl mb-10 animate-fadeIn overflow-hidden">
+        <div className="border-b border-slate-100 p-5 flex justify-between items-center">
+          <div><h2 className="text-xl font-bold  flex items-center gap-2"><span className="material-icons">admin_panel_settings</span>แผงผู้ดูแลระบบ</h2>
+            <p className="text-xs text-slate-400 mt-1">จัดการผู้ใช้งานและสิทธิ์เข้าถึง</p></div>
           <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full"><span className="material-icons">close</span></button>
         </div>
         <div className="flex border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
           {[{key:'users',label:'ผู้ใช้ทั้งหมด',icon:'people',count:users.length},{key:'pending',label:'รออนุมัติ',icon:'pending',count:pending.length},{key:'chat',label:'แชท',icon:'chat',count:0}].map(t=>(
-            <button key={t.key} onClick={()=>setTab(t.key)} className={`flex items-center gap-2 px-6 py-3 text-sm font-bold border-b-2 transition-all ${tab===t.key?'border-primary text-primary':'border-transparent text-slate-400'}`}>
+            <button key={t.key} onClick={()=>setTab(t.key)} className={`flex items-center gap-2 px-6 py-3 text-sm font-bold transition-all ${tab===t.key?'border-slate-800 text-slate-800':'border-transparent text-slate-400'}`}>
               <span className="material-icons text-base">{t.icon}</span>{t.label}
-              {t.count>0&&<span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${t.key==='pending'&&t.count>0?'bg-primary text-white':'bg-slate-200 text-slate-600'}`}>{t.count}</span>}
+              {t.count>0&&<span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${t.key==='pending'&&t.count>0?'bg-[#FFB6B9] text-white':'bg-slate-200 text-slate-600'}`}>{t.count}</span>}
             </button>
           ))}
         </div>
@@ -379,14 +379,14 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
           {loading&&<div className="text-center py-10 text-slate-400"><div className="spinner" style={{borderTopColor:'#94a3b8',borderColor:'rgba(148,163,184,.3)',margin:'0 auto 8px'}}></div>โหลดข้อมูล...</div>}
           {tab==='chat'&&<AdminChatPanel currentUser={currentUser}/>}
           {!loading&&tab==='pending'&&(
-            <div>{pending.length===0?<div className="text-center py-10 text-slate-400"><span className="material-icons text-4xl block mb-2">check_circle</span>ไม่มีรายการรออนุมัติ</div>:
+            <div>{pending.length===0?<div className="text-center py-10 text-slate-400"><span className="material-icons text-2xl block mb-2">check_circle</span>ไม่มีรายการรออนุมัติ</div>:
               <div className="space-y-3">{pending.map(u=>(
-                <div key={u.username} className="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 rounded-2xl">
+                <div key={u.username} className="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 rounded-xl">
                   <div><p className="font-bold text-slate-800 dark:text-white">{u.name}</p>
                     <p className="text-xs text-slate-400">@{u.username}{u.office_name&&` · ${u.office_name}`}</p></div>
                   <div className="flex gap-2">
-                    <button onClick={()=>doAction(()=>api.approveUser(u.username,currentUser),'อนุมัติผู้ใช้แล้ว')} className="flex items-center gap-1 px-4 py-2 bg-success text-white text-xs font-bold rounded-xl"><span className="material-icons text-xs">check</span>อนุมัติ</button>
-                    <button onClick={()=>{if(confirm('ยืนยันลบ?'))doAction(()=>api.deleteUser(u.username,currentUser),'ลบผู้ใช้แล้ว')}} className="flex items-center gap-1 px-3 py-2 bg-primary text-white text-xs font-bold rounded-xl"><span className="material-icons text-xs">delete</span></button>
+                    <button onClick={()=>doAction(()=>api.approveUser(u.username,currentUser),'อนุมัติผู้ใช้แล้ว')} className="flex items-center gap-1 px-4 py-2 bg-[#BBDED6] text-[#4a9d8c] text-xs font-medium rounded-lg"><span className="material-icons text-xs">check</span>อนุมัติ</button>
+                    <button onClick={()=>{if(confirm('ยืนยันลบ?'))doAction(()=>api.deleteUser(u.username,currentUser),'ลบผู้ใช้แล้ว')}} className="flex items-center gap-1 px-3 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl"><span className="material-icons text-xs">delete</span></button>
                   </div>
                 </div>
               ))}</div>}
@@ -415,27 +415,27 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
                           {currentUser.role==='global_admin'&&<option value="global_admin">global admin</option>}
                         </select>}
                     </td>
-                    <td className="px-4 py-3 text-center"><span className={`px-2 py-1 text-[10px] font-bold rounded-full ${u.approved?'bg-green-100 text-success':'bg-yellow-100 text-warning'}`}>{u.approved?'อนุมัติแล้ว':'รออนุมัติ'}</span></td>
+                    <td className="px-4 py-3 text-center"><span className={`px-2 py-0.5 text-[10px] font-medium rounded ${u.approved?'bg-[#BBDED6]/40 text-[#4a9d8c]':'bg-amber-100 text-amber-600'}`}>{u.approved?'อนุมัติแล้ว':'รออนุมัติ'}</span></td>
                     <td className="px-4 py-3 text-center">
                       {u.role==='global_admin'?<span className="text-xs text-slate-300">-</span>:(
                         <div className="flex flex-col items-center gap-0.5">
-                          <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${expired?'bg-red-100 text-primary':u.access_until?daysLeft!<=7?'bg-yellow-100 text-warning':'bg-blue-50 text-secondary':'bg-slate-100 text-slate-400'}`}>
+                          <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${expired?'bg-red-100 text-primary':u.access_until?daysLeft!<=7?'bg-amber-100 text-amber-600':'bg-blue-50 text-secondary':'bg-slate-100 text-slate-400'}`}>
                             {expired?'หมดอายุ':durDisplay}
                           </span>
                           {u.access_until&&!expired&&daysLeft!==null&&<span className="text-[9px] text-slate-400">เหลือ {daysLeft} วัน</span>}
                           {u.access_until&&expired&&<span className="text-[9px] text-primary">หมดอายุแล้ว</span>}
                           {currentUser.role==='global_admin'&&u.role!=='global_admin'&&(
-                            <button onClick={()=>{setLimitUser(u);setSelectedDuration(u.access_duration||'unlimited');setMonthCount(u.access_month_count||1);setDayCount(u.access_day_count||1);setYearCount(u.access_year_count||1)}} className="text-[9px] text-blue-400 hover:underline mt-0.5">ตั้งค่า</button>
+                            <button onClick={()=>{setLimitUser(u);setSelectedDuration(u.access_duration||'unlimited');setMonthCount(u.access_month_count||1);setDayCount(u.access_day_count||1);setYearCount(u.access_year_count||1)}} className="text-[9px] text-[#8AC6D1] hover:underline mt-0.5">ตั้งค่า</button>
                           )}
                         </div>
                       )}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
-                        <button onClick={()=>setEditUser({...u})} className="p-1.5 hover:bg-blue-50 text-blue-400 rounded-lg" title="แก้ไข"><span className="material-icons text-sm">edit</span></button>
+                        <button onClick={()=>setEditUser({...u})} className="p-1.5 hover:bg-slate-50 text-slate-500 rounded-lg" title="แก้ไข"><span className="material-icons text-sm">edit</span></button>
                         {u.approved?<button onClick={()=>doAction(()=>api.revokeUser(u.username,currentUser),'ระงับผู้ใช้แล้ว')} className="p-1.5 hover:bg-yellow-50 text-warning rounded-lg"><span className="material-icons text-sm">block</span></button>:
-                          <button onClick={()=>doAction(()=>api.approveUser(u.username,currentUser),'อนุมัติผู้ใช้แล้ว')} className="p-1.5 hover:bg-green-50 text-success rounded-lg"><span className="material-icons text-sm">check_circle</span></button>}
-                        {u.username!=='admin'&&<button onClick={()=>{if(confirm('ยืนยันลบผู้ใช้ '+u.username+'?'))doAction(()=>api.deleteUser(u.username,currentUser),'ลบผู้ใช้แล้ว')}} className="p-1.5 hover:bg-red-50 text-primary rounded-lg"><span className="material-icons text-sm">delete</span></button>}
+                          <button onClick={()=>doAction(()=>api.approveUser(u.username,currentUser),'อนุมัติผู้ใช้แล้ว')} className="p-1.5 hover:bg-[#BBDED6]/30 text-[#4a9d8c] rounded-lg"><span className="material-icons text-sm">check_circle</span></button>}
+                        {u.username!=='admin'&&<button onClick={()=>{if(confirm('ยืนยันลบผู้ใช้ '+u.username+'?'))doAction(()=>api.deleteUser(u.username,currentUser),'ลบผู้ใช้แล้ว')}} className="p-1.5 hover:bg-[#FFB6B9]/20 text-primary rounded-lg"><span className="material-icons text-sm">delete</span></button>}
                       </div>
                     </td>
                   </tr>
@@ -447,31 +447,31 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
       </div>
       {editUser&&(
         <div className="fixed inset-0 bg-black/60 z-[9100] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-fadeIn">
-            <h3 className="font-bold text-secondary dark:text-white mb-4 font-display">แก้ไขข้อมูลผู้ใช้</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-sm shadow-sm animate-fadeIn">
+            <h3 className="font-semibold text-slate-700 dark:text-white mb-3 ">แก้ไขข้อมูลผู้ใช้</h3>
             <div className="space-y-3">
               <div><label className="text-xs font-bold text-slate-400 mb-1 block">ชื่อ-นามสกุล</label><input value={editUser.name} onChange={e=>setEditUser({...editUser,name:e.target.value})} className="input-style text-sm"/></div>
               <div><label className="text-xs font-bold text-slate-400 mb-1 block">รหัสผ่านใหม่ (เว้นว่างถ้าไม่เปลี่ยน)</label><input type="password" placeholder="••••••••" onChange={e=>setEditUser({...editUser,_newPw:e.target.value})} className="input-style text-sm"/></div>
             </div>
             <div className="flex justify-end gap-2 mt-5">
               <button onClick={()=>setEditUser(null)} className="px-4 py-2 text-sm font-bold text-slate-400 border border-slate-200 dark:border-slate-600 rounded-xl">ยกเลิก</button>
-              <button onClick={()=>doAction(()=>api.editUser(editUser.username,editUser.name,editUser._newPw||'',currentUser),'แก้ไขข้อมูลแล้ว').then(()=>setEditUser(null))} className="px-4 py-2 text-sm font-bold bg-secondary text-white rounded-xl">บันทึก</button>
+              <button onClick={()=>doAction(()=>api.editUser(editUser.username,editUser.name,editUser._newPw||'',currentUser),'แก้ไขข้อมูลแล้ว').then(()=>setEditUser(null))} className="px-4 py-2 text-sm font-bold bg-slate-800 text-white rounded-lg">บันทึก</button>
             </div>
           </div>
         </div>
       )}
       {limitUser&&currentUser.role==='global_admin'&&(
         <div className="fixed inset-0 bg-black/60 z-[9100] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-fadeIn">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-sm shadow-sm animate-fadeIn">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center"><span className="material-icons text-secondary">schedule</span></div>
-              <div><h3 className="font-bold text-secondary dark:text-white font-display">ตั้งค่าระยะเวลาการใช้งาน</h3>
+              <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center"><span className="material-icons text-slate-500">schedule</span></div>
+              <div><h3 className="font-bold text-secondary dark:text-white ">ตั้งค่าระยะเวลาการใช้งาน</h3>
                 <p className="text-xs text-slate-400">@{limitUser.username}</p></div>
             </div>
             <div className="space-y-2 mb-3">
               {([['day','รายวัน','today'],['month','รายเดือน','calendar_month'],['year','รายปี','event'],['unlimited','ไม่จำกัดเวลา','all_inclusive']] as const).map(([val,label,icon])=>(
                 <button key={val} onClick={()=>setSelectedDuration(val)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all ${selectedDuration===val?'border-secondary bg-blue-50 dark:bg-blue-900/20 text-secondary':'border-slate-100 dark:border-slate-700 text-slate-500 hover:border-slate-200'}`}>
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-sm font-medium transition-all ${selectedDuration===val?'border-secondary bg-[#FAE3D9]/40 dark:bg-[#8AC6D1]/10 text-secondary':'border-slate-100 dark:border-slate-700 text-slate-500 hover:border-slate-200'}`}>
                   <span className="material-icons text-base">{icon}</span>{label}
                   {selectedDuration===val&&<span className="material-icons text-base ml-auto">check_circle</span>}
                 </button>
@@ -481,60 +481,60 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
               <div className="mb-4 px-1">
                 <label className="text-xs font-bold text-slate-500 mb-2 block">จำนวนวัน</label>
                 <div className="flex items-center gap-3">
-                  <button onClick={()=>setDayCount(d=>Math.max(1,d-1))} className="w-9 h-9 rounded-xl border-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-secondary hover:text-secondary font-bold text-lg transition-all">−</button>
+                  <button onClick={()=>setDayCount(d=>Math.max(1,d-1))} className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[#8AC6D1] hover:text-[#8AC6D1] font-bold text-lg transition-all">−</button>
                   <div className="flex-1 grid grid-cols-6 gap-1">
                     {[1,2,3,5,7,10,14,30].map(d=>(
                       <button key={d} onClick={()=>setDayCount(d)}
-                        className={`py-1.5 rounded-lg text-xs font-bold transition-all ${dayCount===d?'bg-secondary text-white':'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-blue-50 hover:text-secondary'}`}>
+                        className={`py-1.5 rounded-lg text-xs font-bold transition-all ${dayCount===d?'bg-secondary text-white':'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-blue-50 hover:text-[#8AC6D1]'}`}>
                         {d}
                       </button>
                     ))}
                   </div>
-                  <button onClick={()=>setDayCount(d=>Math.min(365,d+1))} className="w-9 h-9 rounded-xl border-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-secondary hover:text-secondary font-bold text-lg transition-all">+</button>
+                  <button onClick={()=>setDayCount(d=>Math.min(365,d+1))} className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[#8AC6D1] hover:text-[#8AC6D1] font-bold text-lg transition-all">+</button>
                 </div>
-                <p className="text-center text-xs font-black text-secondary mt-2">{dayCount} วัน</p>
+                <p className="text-center text-xs font-medium text-slate-600 mt-2">{dayCount} วัน</p>
               </div>
             )}
             {selectedDuration==='month'&&(
               <div className="mb-4 px-1">
                 <label className="text-xs font-bold text-slate-500 mb-2 block">จำนวนเดือน</label>
                 <div className="flex items-center gap-3">
-                  <button onClick={()=>setMonthCount(m=>Math.max(1,m-1))} className="w-9 h-9 rounded-xl border-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-secondary hover:text-secondary font-bold text-lg transition-all">−</button>
+                  <button onClick={()=>setMonthCount(m=>Math.max(1,m-1))} className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[#8AC6D1] hover:text-[#8AC6D1] font-bold text-lg transition-all">−</button>
                   <div className="flex-1 grid grid-cols-6 gap-1">
                     {[1,2,3,6,9,12,18,24].map(m=>(
                       <button key={m} onClick={()=>setMonthCount(m)}
-                        className={`py-1.5 rounded-lg text-xs font-bold transition-all ${monthCount===m?'bg-secondary text-white':'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-blue-50 hover:text-secondary'}`}>
+                        className={`py-1.5 rounded-lg text-xs font-bold transition-all ${monthCount===m?'bg-secondary text-white':'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-blue-50 hover:text-[#8AC6D1]'}`}>
                         {m}
                       </button>
                     ))}
                   </div>
-                  <button onClick={()=>setMonthCount(m=>Math.min(60,m+1))} className="w-9 h-9 rounded-xl border-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-secondary hover:text-secondary font-bold text-lg transition-all">+</button>
+                  <button onClick={()=>setMonthCount(m=>Math.min(60,m+1))} className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[#8AC6D1] hover:text-[#8AC6D1] font-bold text-lg transition-all">+</button>
                 </div>
-                <p className="text-center text-xs font-black text-secondary mt-2">{monthCount} เดือน ({Math.round(monthCount/12*10)/10} ปี)</p>
+                <p className="text-center text-xs font-medium text-slate-600 mt-2">{monthCount} เดือน ({Math.round(monthCount/12*10)/10} ปี)</p>
               </div>
             )}
             {selectedDuration==='year'&&(
               <div className="mb-4 px-1">
                 <label className="text-xs font-bold text-slate-500 mb-2 block">จำนวนปี</label>
                 <div className="flex items-center gap-3">
-                  <button onClick={()=>setYearCount(y=>Math.max(1,y-1))} className="w-9 h-9 rounded-xl border-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-secondary hover:text-secondary font-bold text-lg transition-all">−</button>
+                  <button onClick={()=>setYearCount(y=>Math.max(1,y-1))} className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[#8AC6D1] hover:text-[#8AC6D1] font-bold text-lg transition-all">−</button>
                   <div className="flex-1 grid grid-cols-6 gap-1">
                     {[1,2,3,4,5,10].map(y=>(
                       <button key={y} onClick={()=>setYearCount(y)}
-                        className={`py-1.5 rounded-lg text-xs font-bold transition-all ${yearCount===y?'bg-secondary text-white':'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-blue-50 hover:text-secondary'}`}>
+                        className={`py-1.5 rounded-lg text-xs font-bold transition-all ${yearCount===y?'bg-secondary text-white':'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-blue-50 hover:text-[#8AC6D1]'}`}>
                         {y}
                       </button>
                     ))}
                   </div>
-                  <button onClick={()=>setYearCount(y=>Math.min(20,y+1))} className="w-9 h-9 rounded-xl border-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-secondary hover:text-secondary font-bold text-lg transition-all">+</button>
+                  <button onClick={()=>setYearCount(y=>Math.min(20,y+1))} className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:border-[#8AC6D1] hover:text-[#8AC6D1] font-bold text-lg transition-all">+</button>
                 </div>
-                <p className="text-center text-xs font-black text-secondary mt-2">{yearCount} ปี</p>
+                <p className="text-center text-xs font-medium text-slate-600 mt-2">{yearCount} ปี</p>
               </div>
             )}
             <p className="text-[10px] text-slate-400 mb-4 text-center">การตั้งค่าใหม่จะเริ่มนับจากวันนี้</p>
             <div className="flex justify-end gap-2">
               <button onClick={()=>setLimitUser(null)} className="px-4 py-2 text-sm font-bold text-slate-400 border border-slate-200 dark:border-slate-600 rounded-xl">ยกเลิก</button>
-              <button onClick={()=>doAction(()=>api.setUserLimit(limitUser.username,selectedDuration,selectedDuration==='month'?monthCount:undefined,selectedDuration==='day'?dayCount:undefined,selectedDuration==='year'?yearCount:undefined,currentUser),'ตั้งค่าระยะเวลาแล้ว').then(()=>setLimitUser(null))} className="px-4 py-2 text-sm font-bold bg-secondary text-white rounded-xl">บันทึก</button>
+              <button onClick={()=>doAction(()=>api.setUserLimit(limitUser.username,selectedDuration,selectedDuration==='month'?monthCount:undefined,selectedDuration==='day'?dayCount:undefined,selectedDuration==='year'?yearCount:undefined,currentUser),'ตั้งค่าระยะเวลาแล้ว').then(()=>setLimitUser(null))} className="px-4 py-2 text-sm font-bold bg-slate-800 text-white rounded-lg">บันทึก</button>
             </div>
           </div>
         </div>
@@ -546,19 +546,19 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
 // ── Header ────────────────────────────────────────────────────────────────────
 function Header({ setPage, darkMode, setDarkMode, currentUser, onLogout, onAdminPanel }:any) {
   return (
-    <header className="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-50 h-20 flex items-center shadow-sm">
+    <header className="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-50 h-14 flex items-center">
       <div className="max-w-7xl mx-auto px-4 w-full flex justify-between items-center">
         <div className="flex items-center cursor-pointer gap-4" onClick={()=>setPage('home')}>
-          <img src="/logo.png" alt="PostOffice" className="w-14 h-14 rounded-full object-cover shadow"/>
+          <img src="/logo.png" alt="PostOffice" className="w-8 h-8 rounded-lg object-cover"/>
           <div className="flex flex-col border-r border-slate-200 pr-4">
-            <span className="text-primary font-bold text-lg leading-none font-display">PostOffice</span>
-            <span className="text-[9px] text-secondary dark:text-blue-400 font-semibold tracking-widest uppercase">ระบบบริหารจัดการงานไปรษณีย์</span>
+            <span className="text-primary font-semibold text-sm leading-none tracking-tight">PostOffice</span>
+            <span className="text-[9px] text-slate-400 font-medium tracking-widest uppercase">ระบบบริหารจัดการงานไปรษณีย์</span>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <nav className="hidden md:flex items-center gap-1">
             {[{key:'register',icon:'edit_note',label:'ลงทะเบียน'},{key:'queue',icon:'print',label:'พิมพ์ / ติดตาม'},{key:'track',icon:'search',label:'ค้นหา'}].map(item=>(
-              <button key={item.key} onClick={()=>setPage(item.key)} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-secondary transition-all">
+              <button key={item.key} onClick={()=>setPage(item.key)} className="flex items-center gap-1 px-3 py-1.5 rounded-md text-xs text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">
                 <span className="material-icons text-sm">{item.icon}</span>{item.label}
               </button>
             ))}
@@ -568,12 +568,12 @@ function Header({ setPage, darkMode, setDarkMode, currentUser, onLogout, onAdmin
               LINE
             </a>
           </nav>
-          {canManage(currentUser?.role||'')&&<button onClick={onAdminPanel} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-primary hover:bg-red-50 dark:hover:bg-red-900/20 transition-all border border-red-100 dark:border-red-800"><span className="material-icons text-sm">admin_panel_settings</span>{currentUser?.role==='global_admin'?'Global Admin':'Admin'}</button>}
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-700 rounded-full border border-slate-100 dark:border-slate-600">
+          {canManage(currentUser?.role||'')&&<button onClick={onAdminPanel} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-primary transition-colors border border-slate-200 dark:border-slate-600 hover:bg-slate-50"><span className="material-icons text-sm">admin_panel_settings</span>{currentUser?.role==='global_admin'?'Global Admin':'Admin'}</button>}
+          <div className="flex items-center gap-2 px-2.5 py-1 bg-slate-50 dark:bg-slate-700 rounded-md">
             <span className="material-icons text-slate-400 text-sm">person</span>
             <span className="text-xs font-bold text-slate-600 dark:text-slate-300 max-w-[80px] truncate">{currentUser?.name}</span>
           </div>
-          <button onClick={onLogout} className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors text-slate-400 hover:text-primary"><span className="material-icons text-base">logout</span></button>
+          <button onClick={onLogout} className="p-2 hover:bg-[#FFB6B9]/20 dark:hover:bg-[#FFB6B9]/10 rounded-full transition-colors text-slate-400 hover:text-primary"><span className="material-icons text-base">logout</span></button>
           <button onClick={()=>setDarkMode(!darkMode)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors"><span className="material-icons text-slate-400 text-base">{darkMode?'light_mode':'dark_mode'}</span></button>
         </div>
       </div>
@@ -584,25 +584,25 @@ function Header({ setPage, darkMode, setDarkMode, currentUser, onLogout, onAdmin
 // ── Home Page ─────────────────────────────────────────────────────────────────
 function HomePage({ setPage }:{ setPage:(p:string)=>void }) {
   return (
-    <div className="animate-fadeIn py-16 text-center max-w-5xl mx-auto px-4">
+    <div className="animate-fadeIn py-10 text-center max-w-3xl mx-auto px-4">
       <div className="flex flex-col items-center mb-8">
-        <img src="/logo.png" alt="PostOffice" className="w-24 h-24 rounded-full shadow-xl mb-4 object-cover"/>
-        <h2 className="text-4xl font-extrabold text-secondary dark:text-white mb-2 font-display">ระบบบริหารจัดการงานไปรษณีย์</h2>
-        <p className="text-slate-400">สำนักงานที่ดินจังหวัดนครปฐม</p>
+        <img src="/logo.png" alt="PostOffice" className="w-24 h-24 rounded-full  mb-4 object-cover"/>
+        <h2 className="text-2xl font-semibold text-slate-700 dark:text-white mb-2">ระบบบริหารจัดการงานไปรษณีย์</h2>
+        <p className="text-slate-400 text-sm">สำนักงานที่ดินจังหวัดนครปฐม</p>
       </div>
-      <div className="grid md:grid-cols-3 gap-6 mb-10">
-        {[{page:'register',icon:'edit_note',bg:'bg-red-50',ic:'text-primary',btn:'bg-primary',label:'ลงทะเบียนหนังสือ'},
-          {page:'queue',icon:'print',bg:'bg-blue-50',ic:'text-secondary',btn:'bg-secondary',label:'พิมพ์ / ติดตาม'},
-          {page:'track',icon:'search',bg:'bg-green-50',ic:'text-success',btn:'bg-success',label:'ค้นหาหนังสือ'}].map(item=>(
-          <div key={item.page} onClick={()=>setPage(item.page)} className="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] shadow-xl border border-slate-50 dark:border-slate-700 cursor-pointer hover:scale-[1.02] transition-all">
-            <div className={`w-20 h-20 ${item.bg} rounded-full flex items-center justify-center mx-auto mb-6`}><span className={`material-icons ${item.ic} text-4xl`}>{item.icon}</span></div>
-            <h3 className="text-xl font-bold text-secondary dark:text-white mb-6 font-display">{item.label}</h3>
-            <div className={`${item.btn} text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 text-sm`}><span className="material-icons text-base">arrow_forward</span>เข้าใช้งาน</div>
+      <div className="grid md:grid-cols-3 gap-4 mb-8">
+        {[{page:'register',icon:'edit_note',bg:'bg-[#FFB6B9]/20',ic:'text-primary',btn:'bg-[#FFB6B9]',label:'ลงทะเบียนหนังสือ'},
+          {page:'queue',icon:'print',bg:'bg-[#FAE3D9]/50',ic:'text-secondary',btn:'bg-[#8AC6D1]',label:'พิมพ์ / ติดตาม'},
+          {page:'track',icon:'search',bg:'bg-[#BBDED6]/30',ic:'text-success',btn:'bg-[#BBDED6]',label:'ค้นหาหนังสือ'}].map(item=>(
+          <div key={item.page} onClick={()=>setPage(item.page)} className="bg-white dark:bg-slate-800 p-8 rounded-xl  border border-slate-50 dark:border-slate-700 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors">
+            <div className={`w-12 h-12 ${item.bg} rounded-full flex items-center justify-center mx-auto mb-6`}><span className={`material-icons ${item.ic} text-2xl`}>{item.icon}</span></div>
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-white mb-4">{item.label}</h3>
+            <div className={`${item.btn} text-white py-2 rounded-lg font-medium flex items-center justify-center gap-2 text-xs`}>เข้าใช้งาน →</div>
           </div>
         ))}
       </div>
       {/* LINE Button on Home */}
-      <a href="https://line.me/R/ti/p/@815cmnav" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2.5 px-6 py-3 rounded-2xl font-bold text-sm text-white shadow-lg transition-all hover:opacity-90" style={{background:'#06C755'}}>
+      <a href="https://line.me/R/ti/p/@815cmnav" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl font-bold text-sm text-white  transition-all hover:opacity-90" style={{background:'#06C755'}}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
         สอบถามผ่าน LINE
       </a>
@@ -722,11 +722,11 @@ function LandOfficeAutocomplete({ value, onChange, onSelect, onSelectHistory, di
       <input value={value} onChange={e=>handleChange(e.target.value)} onFocus={()=>{ if(hasAny)setShow(true) }}
         disabled={disabled} className="input-style text-sm" placeholder="พิมพ์ชื่อสำนักงานที่ดิน หรือชื่อหน่วยงาน..." autoComplete="off"/>
       {show&&hasAny&&(
-        <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl max-h-72 overflow-y-auto">
+        <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl shadow-sm max-h-72 overflow-y-auto">
           {/* ── ประวัติจาก records ── */}
           {historySuggestions.length>0&&(
             <>
-              <div className="px-4 py-1.5 text-[10px] font-black text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-slate-900 flex items-center gap-1">
+              <div className="px-4 py-1.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-slate-900 flex items-center gap-1">
                 <span className="material-icons text-xs">history</span>เคยส่งแล้ว
               </div>
               {historySuggestions.slice(0,5).map((r:any,i:number)=>(
@@ -746,7 +746,7 @@ function LandOfficeAutocomplete({ value, onChange, onSelect, onSelectHistory, di
           {/* ── สำนักงานที่ดิน ── */}
           {landSuggestions.length>0&&(
             <>
-              <div className="px-4 py-1.5 text-[10px] font-black text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-slate-900 flex items-center gap-1">
+              <div className="px-4 py-1.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-slate-900 flex items-center gap-1">
                 <span className="material-icons text-xs">business</span>สำนักงานที่ดิน
               </div>
               {landSuggestions.map((item:any,i:number)=>(
@@ -857,51 +857,51 @@ function RegisterPage({ setPage, locations, refresh, addToast, currentUser }:any
 
   const lbl='block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1'
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 animate-fadeIn">
-      <button onClick={()=>setPage('home')} className="flex items-center gap-1 text-slate-400 hover:text-primary mb-5 font-bold text-sm"><span className="material-icons text-base">arrow_back</span>ย้อนกลับ</button>
+    <div className="max-w-4xl mx-auto px-4 py-6 animate-fadeIn">
+      <button onClick={()=>setPage('home')} className="flex items-center gap-1 text-slate-400 hover:text-slate-600 mb-4 text-xs"><span className="material-icons text-base">arrow_back</span>ย้อนกลับ</button>
       <div className="flex flex-wrap items-center justify-between mb-6 gap-3">
-        <h2 className="text-2xl font-bold text-secondary dark:text-white font-display flex items-center gap-2"><span className="material-icons text-primary">edit_note</span>ลงทะเบียนหนังสือ</h2>
+        <h2 className="text-lg font-semibold text-slate-700 dark:text-white flex items-center gap-2"><span className="material-icons text-slate-400">edit_note</span>ลงทะเบียนหนังสือ</h2>
         <div className="flex items-center gap-2 flex-wrap">
           {locked&&(
             <>
-              <button type="button" onClick={handleNew} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-secondary hover:opacity-90 transition-all">
+              <button type="button" onClick={handleNew} className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-white bg-[#8AC6D1] hover:opacity-80 transition-all">
                 <span className="material-icons text-base">add_circle</span>เพิ่มใหม่
               </button>
               {!editMode&&(
-                <button type="button" onClick={handleEdit} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-warning hover:opacity-90 transition-all">
+                <button type="button" onClick={handleEdit} className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-white bg-warning hover:opacity-90 transition-all">
                   <span className="material-icons text-base">edit</span>แก้ไข
                 </button>
               )}
             </>
           )}
-          <a href="/form-template.xlsx" download="ฟอร์มนำเข้าข้อมูล.xlsx" className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-500 hover:bg-blue-600 transition-all cursor-pointer">
+          <a href="/form-template.xlsx" download="ฟอร์มนำเข้าข้อมูล.xlsx" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-white bg-blue-500 hover:bg-blue-600 transition-all cursor-pointer">
             <span className="material-icons text-base">download</span>ดาวน์โหลดฟอร์ม
           </a>
           <input ref={fileRef} type="file" accept=".xlsx,.xls" onChange={handleExcel} className="hidden" id="excel-upload"/>
-          <label htmlFor="excel-upload" className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white cursor-pointer transition-all ${excelLoading?'bg-slate-400':'bg-success hover:opacity-90'}`}>
+          <label htmlFor="excel-upload" className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-white cursor-pointer transition-all ${excelLoading?'bg-slate-400':'bg-success hover:opacity-90'}`}>
             {excelLoading?<><div className="spinner"></div>กำลังนำเข้า...</>:<><span className="material-icons text-base">upload_file</span>นำเข้า Excel</>}
           </label>
         </div>
       </div>
 
       {locked&&!editMode&&(
-        <div className="mb-5 p-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-xl font-bold flex items-center gap-2 text-sm">
+        <div className="mb-4 p-3 bg-slate-50 border border-slate-100 rounded-lg text-[#4a9d8c] flex items-center gap-2 text-xs font-medium">
           <span className="material-icons text-base">lock</span>
           บันทึกเรียบร้อยแล้ว — กด <strong>เพิ่มใหม่</strong> เพื่อกรอกรายการถัดไป หรือ <strong>แก้ไข</strong> เพื่อแก้ไขข้อมูล
         </div>
       )}
       {editMode&&(
-        <div className="mb-5 p-3 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300 rounded-xl font-bold flex items-center gap-2 text-sm">
+        <div className="mb-4 p-3 bg-slate-50 border border-slate-100 rounded-lg text-amber-600 flex items-center gap-2 text-xs font-medium">
           <span className="material-icons text-base">edit_note</span>กำลังแก้ไขข้อมูล — บันทึกเมื่อแก้ไขเสร็จ
         </div>
       )}
 
-      <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-xs text-blue-700 dark:text-blue-300 flex items-start gap-2">
+      <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-xs border border-slate-100 dark:border-slate-700 text-[#8AC6D1] dark:text-[#BBDED6] flex items-start gap-2">
         <span className="material-icons text-sm mt-0.5">info</span>
         <span>ดาวน์โหลดฟอร์ม <strong>กรอกรายละเอียด</strong> ชื่อผู้รับ , ถึง , ที่อยู่ , ตำบล , อำเภอ , จังหวัด , รหัสไปรษณีย์ , เจ้าของเรื่อง , เลขที่หนังสือ , จำนวน , ประเภท  ลงในฟอร์มให้เรียบร้อยค่อยอัพโหลดไฟล์ excel</span>
       </div>
 
-      <form onSubmit={submit} className="glass-card p-8 space-y-6">
+      <form onSubmit={submit} className="border border-slate-100 dark:border-slate-700 rounded-xl p-6 space-y-5 bg-white dark:bg-slate-800">
         <div className="flex flex-col md:flex-row gap-6 pb-6 border-b border-slate-100 dark:border-slate-700">
           <div className="flex items-center gap-3">
             <span className="text-xs font-bold text-slate-400 uppercase">ประเภท</span>
@@ -967,14 +967,14 @@ function RegisterPage({ setPage, locations, refresh, addToast, currentUser }:any
           <AddressDropdowns locations={locations} form={form} setForm={setForm} disabled={isDisabled}/>
         </div>
         <div className="flex justify-between pt-4 border-t border-slate-100 dark:border-slate-700">
-          <button type="button" onClick={()=>setPage('home')} className="px-6 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm font-bold text-slate-400">ยกเลิก</button>
+          <button type="button" onClick={()=>setPage('home')} className="px-5 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-400">ยกเลิก</button>
           <div className="flex gap-3">
             {!isDisabled&&(
-              <button type="submit" disabled={loading} className="bg-primary text-white px-8 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 disabled:opacity-60">
+              <button type="submit" disabled={loading} className="bg-slate-800 text-white px-8 py-2.5 rounded-lg font-medium text-sm flex items-center gap-2 disabled:opacity-50">
                 {loading?<><div className="spinner"></div>{editMode?'กำลังแก้ไข...':'บันทึก...'}</>:<><span className="material-icons text-base">{editMode?'save':'save'}</span>{editMode?'บันทึกการแก้ไข':'บันทึก'}</>}
               </button>
             )}
-            <button type="button" onClick={()=>setPage('queue')} className="bg-success text-white px-6 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2">ถัดไป<span className="material-icons text-base">arrow_forward</span></button>
+            <button type="button" onClick={()=>setPage('queue')} className="bg-success text-white px-6 py-2.5 rounded-lg font-medium text-sm flex items-center gap-2">ถัดไป<span className="material-icons text-base">arrow_forward</span></button>
           </div>
         </div>
       </form>
@@ -1175,10 +1175,10 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
     <div className="max-w-7xl mx-auto px-4 py-8 animate-fadeIn">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-secondary dark:text-white font-display">พิมพ์หนังสือ</h2>
+          <h2 className="text-3xl font-bold text-secondary dark:text-white ">พิมพ์หนังสือ</h2>
           <p className="text-slate-400 text-sm mt-1">เลือกรายการ → กรอกเลขแท็ก → Enter รันต่ออัตโนมัติ</p>
         </div>
-        <div className="bg-white dark:bg-slate-800 px-5 py-3 rounded-2xl border border-slate-100 dark:border-slate-700 flex flex-wrap gap-4 items-center shadow-lg">
+        <div className="bg-white dark:bg-slate-800 px-5 py-3 rounded-xl border border-slate-100 dark:border-slate-700 flex flex-wrap gap-4 items-center ">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold text-slate-400 uppercase">กระดาษ</span>
             <div className="flex gap-0.5">
@@ -1248,7 +1248,7 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
           href="/คู่มือปฏิบัติงาน_พิมพ์หนังสือ.pdf"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:opacity-90 transition-opacity whitespace-nowrap"
+          className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl hover:opacity-90 transition-opacity whitespace-nowrap"
         >
           <span className="material-icons text-sm">picture_as_pdf</span>
           เปิดคู่มือ PDF
@@ -1256,11 +1256,11 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
       </div>
 
       {/* Table */}
-      <div className="glass-card shadow-xl mb-8">
+      <div className="glass-card  mb-8">
         <div className="p-5 border-b border-slate-50 dark:border-slate-700 flex flex-wrap justify-between items-center gap-3 bg-slate-50/50">
-          <h3 className="font-bold text-secondary dark:text-white flex items-center gap-2 font-display">
+          <h3 className="font-bold text-secondary dark:text-white flex items-center gap-2 ">
             <span className="material-icons text-primary text-base">list_alt</span>รายชื่อผู้รับ
-            <span className="bg-primary text-white text-[10px] px-2 py-0.5 rounded-full">{sortedRecords.length}</span>
+            <span className="bg-slate-800 text-white text-[10px] px-2 py-0.5 rounded-full">{sortedRecords.length}</span>
           </h3>
           <div className="flex gap-2 items-center flex-wrap">
             {/* Sort Dropdown */}
@@ -1283,7 +1283,7 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
             <button onClick={saveTracking} className="px-3 py-1.5 bg-success text-white text-xs font-bold rounded-full flex items-center gap-1"><span className="material-icons text-xs">save</span>บันทึกแท็ก</button>
             {/* Delete Button */}
             {selected.size>0&&(
-              <button onClick={deleteSelected} disabled={deleting} className="px-3 py-1.5 bg-primary text-white text-xs font-bold rounded-full flex items-center gap-1 disabled:opacity-60">
+              <button onClick={deleteSelected} disabled={deleting} className="px-3 py-1.5 bg-slate-800 text-white text-xs font-bold rounded-full flex items-center gap-1 disabled:opacity-60">
                 {deleting?<><div className="spinner"></div>ลบ...</>:<><span className="material-icons text-xs">delete</span>ลบ ({selected.size})</>}
               </button>
             )}
@@ -1321,7 +1321,7 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
                         <input ref={el=>{if(el)inputRefs.current[r.rowId]=el}} value={num8}
                           onChange={e=>{const v=e.target.value.replace(/\D/g,'').substring(0,8);const autocd=v.length===8?calcCheckDigit(v):'';setTrackingData(prev=>({...prev,[r.rowId]:{...prev[r.rowId],prefix:prev[r.rowId]?.prefix||prefix,num8:v,cd:autocd||prev[r.rowId]?.cd||''}}))}}
                           onKeyDown={e=>handleNum8KeyDown(e,r.rowId,rowIndex)} className="tr-inp" style={{width:'72px'}} maxLength={8} placeholder="12340001"/>
-                        <input value={cd} onChange={e=>{const v=e.target.value.replace(/\D/g,'').substring(0,1);setTrackingData(prev=>({...prev,[r.rowId]:{...prev[r.rowId],prefix:prev[r.rowId]?.prefix||prefix,num8:prev[r.rowId]?.num8||num8,cd:v}}))}} className="tr-inp" style={{width:'22px',background:'#f0fdf4',color:'#166534',fontWeight:700}} maxLength={1}/>
+                        <input value={cd} onChange={e=>{const v=e.target.value.replace(/\D/g,'').substring(0,1);setTrackingData(prev=>({...prev,[r.rowId]:{...prev[r.rowId],prefix:prev[r.rowId]?.prefix||prefix,num8:prev[r.rowId]?.num8||num8,cd:v}}))}} className="tr-inp" style={{width:'22px',background:'#e8f8f5',color:'#4a9d8c',fontWeight:700}} maxLength={1}/>
                         <span className="tr-suf">TH</span>
                       </div>
                       {isComplete&&<div className="text-[10px] font-mono text-success mt-1 font-bold">{full}</div>}
@@ -1352,11 +1352,11 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
             {[{key:'envelope',color:'bg-secondary',icon:'mail',label:'ซองจดหมาย'},
               {key:'ar_yellow',color:'bg-yellow-500',icon:'assignment',label:'ใบตอบรับ สีเหลือง'},
               {key:'ar_blue',color:'bg-blue-400',icon:'assignment',label:'ใบตอบรับ สีฟ้า'}].map(({key,color,icon,label})=>(
-              <button key={key} onClick={()=>handlePrint(key)} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white transition-all ${color}`}>
+              <button key={key} onClick={()=>handlePrint(key)} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-white transition-all ${color}`}>
                 <span className="material-icons text-base">{icon}</span>{label}
               </button>
             ))}
-            <button onClick={handleExportPostalExcel} disabled={excelExporting} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-green-600 hover:bg-green-700 disabled:opacity-60 transition-all">
+            <button onClick={handleExportPostalExcel} disabled={excelExporting} className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-60 transition-all">
               {excelExporting?<><div className="spinner"></div>กำลังสร้าง...</>:<><span className="material-icons text-base">table_view</span>ใบนำส่งไปรษณีย์</>}
             </button>
           </div>
@@ -1392,12 +1392,12 @@ function TrackPage({ addToast, currentUser }:any) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 animate-fadeIn space-y-6">
-      <h2 className="text-2xl font-bold text-secondary dark:text-white font-display flex items-center gap-2"><span className="material-icons text-primary">search</span>ค้นหาหนังสือ</h2>
+      <h2 className="text-lg font-semibold text-slate-700 dark:text-white flex items-center gap-2"><span className="material-icons text-primary">search</span>ค้นหาหนังสือ</h2>
       <div className="glass-card p-5">
         <div className="flex gap-3">
           <div className="relative flex-1"><span className="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-base">search</span>
             <input value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>e.key==='Enter'&&doSearch()} className="input-style pl-10 text-sm" placeholder="ค้นหาด้วยเลขที่หนังสือ, ชื่อผู้รับ, เลขแท็ก, เจ้าของเรื่อง..."/></div>
-          <button onClick={doSearch} disabled={loading} className="bg-secondary text-white px-6 py-2 rounded-xl font-bold text-sm flex items-center gap-2 disabled:opacity-60">
+          <button onClick={doSearch} disabled={loading} className="bg-secondary text-white px-6 py-2 rounded-lg font-medium text-sm flex items-center gap-2 disabled:opacity-50">
             {loading?<><div className="spinner"></div>ค้นหา...</>:<><span className="material-icons text-sm">search</span>ค้นหา</>}
           </button>
         </div>
@@ -1439,7 +1439,7 @@ function TrackPage({ addToast, currentUser }:any) {
                 <div className="flex justify-between items-start mb-2"><span className="text-slate-400 text-xs">เลขแท็กกิ้ง:</span><span className="font-bold dark:text-white text-sm font-mono tracking-wide">{getTracking(selected)}</span></div>
                 {hasTag(selected)&&<div className="flex gap-2 justify-end mt-2">
                   <button onClick={()=>handleCopy(selected)} className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-bold transition-all"><span className="material-icons text-xs">{copied?'check':'content_copy'}</span>{copied?'คัดลอกแล้ว':'คัดลอก'}</button>
-                  <button onClick={()=>handleTrackPost(selected)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all shadow-sm hover:opacity-90" style={{background:'linear-gradient(135deg,#EE2D24,#b91c1c)'}}><span className="material-icons text-xs">local_shipping</span>ตรวจสอบที่ไปรษณีย์ไทย<span className="material-icons text-xs">open_in_new</span></button>
+                  <button onClick={()=>handleTrackPost(selected)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all shadow-sm hover:opacity-90" style={{background:'linear-gradient(135deg,#FFB6B9,#e8999c)'}}><span className="material-icons text-xs">local_shipping</span>ตรวจสอบที่ไปรษณีย์ไทย<span className="material-icons text-xs">open_in_new</span></button>
                 </div>}
                 {!hasTag(selected)&&<p className="text-right text-[10px] text-warning mt-1">ยังไม่มีเลขแท็ก</p>}
               </div>
@@ -1574,13 +1574,13 @@ function ChatWidget({ currentUser }: { currentUser: SessionUser | null }) {
       {/* ── Floating Button ── */}
       <button
         onClick={handleOpen}
-        className="fixed bottom-6 right-6 z-[9800] w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95"
-        style={{ background: 'linear-gradient(135deg, #002B5B, #EE2D24)' }}
+        className="fixed bottom-6 right-6 z-[9800] w-14 h-14 rounded-full shadow-sm flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+        style={{ background: 'linear-gradient(135deg, #8AC6D1, #FFB6B9)' }}
         title="แชทกับผู้ดูแลระบบ"
       >
         <span className="material-icons text-white text-2xl">{open ? 'close' : 'chat'}</span>
         {unread > 0 && !open && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-black flex items-center justify-center animate-pulse">
+          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-semibold flex items-center justify-center animate-pulse">
             {unread > 9 ? '9+' : unread}
           </span>
         )}
@@ -1588,12 +1588,12 @@ function ChatWidget({ currentUser }: { currentUser: SessionUser | null }) {
 
       {/* ── Chat Panel ── */}
       {open && (
-        <div className="fixed bottom-24 right-6 z-[9800] w-80 md:w-96 flex flex-col rounded-3xl shadow-2xl overflow-hidden animate-fadeIn"
+        <div className="fixed bottom-24 right-6 z-[9800] w-80 md:w-96 flex flex-col rounded-xl-sm overflow-hidden animate-fadeIn"
           style={{ height: '480px', background: 'white', border: '1px solid #e2e8f0' }}>
 
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 text-white flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, #002B5B, #1a3a6b)' }}>
+            style={{ background: 'linear-gradient(135deg, #8AC6D1, #BBDED6)' }}>
             <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
               <span className="material-icons text-white text-lg">support_agent</span>
             </div>
@@ -1617,7 +1617,7 @@ function ChatWidget({ currentUser }: { currentUser: SessionUser | null }) {
                 ? <p className="text-xs text-slate-400 p-3">ยังไม่มีข้อความ</p>
                 : adminRooms.map(({ room: r, msgs: ms }) => (
                   <button key={r} onClick={() => setActiveRoom(r)}
-                    className={`flex-shrink-0 px-3 py-2 text-left border-b-2 transition-all ${activeRoom===r ? 'border-secondary text-secondary bg-white' : 'border-transparent text-slate-400 hover:bg-white'}`}
+                    className={`flex-shrink-0 px-3 py-2 text-left transition-all ${activeRoom===r ? 'border-secondary text-secondary bg-white' : 'border-transparent text-slate-400 hover:bg-white'}`}
                     style={{ minWidth: '120px' }}>
                     <p className="text-[10px] font-bold truncate">{getRoomLabel(r)}</p>
                     <p className="text-[9px] text-slate-400 truncate">{ms[ms.length-1]?.message || ''}</p>
@@ -1631,7 +1631,7 @@ function ChatWidget({ currentUser }: { currentUser: SessionUser | null }) {
           <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ background: '#f8fafc' }}>
             {msgs.length === 0 && (
               <div className="text-center py-8">
-                <span className="material-icons text-4xl text-slate-200 block mb-2">chat_bubble_outline</span>
+                <span className="material-icons text-2xl text-slate-200 block mb-2">chat_bubble_outline</span>
                 <p className="text-xs text-slate-400 font-bold">
                   {isAdmin ? (activeRoom ? 'ยังไม่มีข้อความในห้องนี้' : 'เลือกห้องสนทนา') : 'ส่งข้อความหาผู้ดูแลระบบได้เลย'}
                 </p>
@@ -1647,12 +1647,12 @@ function ChatWidget({ currentUser }: { currentUser: SessionUser | null }) {
                       {isAdmin ? m.sender : 'ผู้ดูแลระบบ'}
                     </span>
                   )}
-                  <div className={`max-w-[80%] px-3 py-2 rounded-2xl text-sm leading-relaxed shadow-sm ${
+                  <div className={`max-w-[80%] px-3 py-2 rounded-xl text-sm leading-relaxed shadow-sm ${
                     isMine
                       ? 'text-white rounded-br-sm'
                       : 'bg-white text-slate-700 rounded-bl-sm border border-slate-100'
                   }`}
-                    style={isMine ? { background: 'linear-gradient(135deg,#002B5B,#1a4a8f)' } : {}}>
+                    style={isMine ? { background: 'linear-gradient(135deg,#8AC6D1,#BBDED6)' } : {}}>
                     {m.message}
                   </div>
                   <span className="text-[9px] text-slate-300 mt-0.5 px-1">{formatTime(m.created_at)}</span>
@@ -1670,13 +1670,13 @@ function ChatWidget({ currentUser }: { currentUser: SessionUser | null }) {
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
                 placeholder={isAdmin ? `ตอบกลับ ${activeRoom ? getRoomLabel(activeRoom) : ''}...` : 'พิมพ์ข้อความ...'}
-                className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/20 transition-all"
+                className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-slate-400 focus:ring-0 transition-all"
                 disabled={sending}
                 autoFocus
               />
               <button onClick={send} disabled={sending || !input.trim()}
-                className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-40"
-                style={{ background: 'linear-gradient(135deg,#002B5B,#EE2D24)' }}>
+                className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-40"
+                style={{ background: 'linear-gradient(135deg,#8AC6D1,#FFB6B9)' }}>
                 {sending
                   ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   : <span className="material-icons text-white text-base">send</span>
@@ -1763,7 +1763,7 @@ export default function App() {
   const expired=isAccessExpired(currentUser.access_until)
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 transition-colors">
       <Header setPage={setPage} darkMode={darkMode} setDarkMode={setDarkMode} currentUser={currentUser} onLogout={handleLogout} onAdminPanel={()=>setShowAdmin(true)}/>
       <main className="flex-grow">
         {page==='home'     &&<HomePage     setPage={setPage}/>}
@@ -1771,7 +1771,7 @@ export default function App() {
         {page==='queue'    &&<QueuePage    setPage={setPage} addToast={addToast} currentUser={currentUser}/>}
         {page==='track'    &&<TrackPage    setPage={setPage} addToast={addToast} currentUser={currentUser}/>}
       </main>
-      <footer className="py-8 border-t border-slate-100 dark:border-slate-800 text-center text-slate-400 text-[9px] uppercase tracking-widest font-bold">© 2026 ระบบจัดการส่งจดหมาย — PostOffice</footer>
+      <footer className="py-5 border-t border-slate-100 dark:border-slate-800 text-center text-slate-300 text-[9px] uppercase tracking-widest">© 2026 ระบบจัดการส่งจดหมาย — PostOffice</footer>
       <Toast toasts={toasts}/>
       {showAdmin&&canManage(currentUser?.role||'')&&<AdminPanel currentUser={currentUser} addToast={addToast} onClose={()=>setShowAdmin(false)}/>}
       {showExpModal&&currentUser&&<ExpirationModal user={currentUser} onClose={()=>setShowExpModal(false)} onLogout={handleLogout}/>}
