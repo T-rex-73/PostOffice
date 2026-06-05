@@ -588,7 +588,6 @@ function HomePage({ setPage }:{ setPage:(p:string)=>void }) {
       <div className="flex flex-col items-center mb-8">
         <img src="/logo.png" alt="PostOffice" className="w-24 h-24 rounded-full  mb-4 object-cover"/>
         <h2 className="text-2xl font-semibold text-slate-700 dark:text-white mb-2">ระบบบริหารจัดการงานไปรษณีย์</h2>
-        <p className="text-slate-400 text-sm">สำนักงานที่ดินจังหวัดนครปฐม</p>
       </div>
       <div className="grid md:grid-cols-3 gap-4 mb-8">
         {[{page:'register',icon:'edit_note',bg:'bg-[#FFB6B9]/20',ic:'text-primary',btn:'bg-[#FFB6B9]',label:'ลงทะเบียนหนังสือ'},
