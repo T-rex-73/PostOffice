@@ -302,7 +302,7 @@ function ARYellow({ r, info, isLast }: { r: EnvelopeData; info: OfficeInfo; show
       }} />
       {/* ══ ครึ่งล่าง: ผู้ส่ง ═════════════════════════════════════════════ */}
       <div style={{
-        position: 'absolute', top: '130mm', left: 150, right: 0, bottom: 0,
+        position: 'absolute', top: '125mm', left: 150, right: 0, bottom: 0,
         display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
         justifyContent: 'center',
         paddingLeft: '20mm', paddingRight: '8mm', boxSizing: 'border-box',
@@ -312,7 +312,7 @@ function ARYellow({ r, info, isLast }: { r: EnvelopeData; info: OfficeInfo; show
         {addrLine1 && <div>{addrLine1}</div>}
         {addrLine2 && <div>{addrLine2}</div>}
         <div>ที่ {r.book_no}&nbsp;&nbsp;&nbsp;{r.owner}</div>
-        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold', letterSpacing: '0.24em', marginLeft: '38mm', marginTop: '12mm' }}>
+        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold', letterSpacing: '0.24em', marginLeft: '38mm', marginTop: '20mm' }}>
           {info.office_zip ? formatZipSpaced(info.office_zip) : (zip || r.zip)}
         </div>
       </div>
@@ -380,7 +380,7 @@ const lowerZipFs  = '24pt'
         <div style={{ position: 'relative', paddingLeft: '0mm', marginTop: '0.5mm' }}>
           <span>จังหวัด{r.province}</span>
           <span style={{
-            position: 'absolute', top: 1, left: "50mm", right: '0mm',
+            position: 'absolute', top: 1, left: "60mm", right: '0mm',
             fontSize: upperZipFs, fontWeight: 'bold', letterSpacing: '0.04em',
           }}>
             {zip || r.zip}
@@ -409,7 +409,7 @@ const lowerZipFs  = '24pt'
         {addrLine1 && <div>{addrLine1}</div>}
         {addrLine2 && <div>{addrLine2}</div>}
         <div>ที่ {r.book_no}&nbsp;&nbsp;&nbsp;{r.owner}</div>
-        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold',paddingLeft: '35mm', letterSpacing: '0.18em', marginTop: '7mm' }}>
+        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold',paddingLeft: '38mm', letterSpacing: '0.18em', marginTop: '7mm' }}>
           {info.office_zip ? formatZipSpaced(info.office_zip) : (zip || r.zip)}
         </div>
       </div>
