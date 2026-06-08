@@ -16,7 +16,7 @@ export type GarudaSize = 'normal' | 'small'
 interface Props { records: EnvelopeData[]; size: EnvSize; officeInfo: OfficeInfo; showGaruda: boolean; garudaSize?: GarudaSize }
 
 const F: React.CSSProperties = {
-  fontFamily: "'Sarabun','TH Sarabun IT ๙','Kanit',sans-serif",
+  fontFamily: "'TH Sarabun IT ๙', 'TH Sarabun New', 'TH Sarabun', sans-serif",
   color: '#000', lineHeight: 1.2,
 }
 
@@ -312,7 +312,7 @@ function ARYellow({ r, info, isLast }: { r: EnvelopeData; info: OfficeInfo; show
         {addrLine1 && <div>{addrLine1}</div>}
         {addrLine2 && <div>{addrLine2}</div>}
         <div>ที่ {r.book_no}&nbsp;&nbsp;&nbsp;{r.owner}</div>
-        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold', letterSpacing: '0.1em', marginLeft: '38mm', marginTop: '22mm' }}>
+        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold', letterSpacing: '0.29em', marginLeft: '38mm', marginTop: '22mm' }}>
           {info.office_zip ? formatZipSpaced(info.office_zip) : (zip || r.zip)}
         </div>
       </div>
@@ -409,7 +409,7 @@ const lowerZipFs  = '24pt'
         {addrLine1 && <div>{addrLine1}</div>}
         {addrLine2 && <div>{addrLine2}</div>}
         <div>ที่ {r.book_no}&nbsp;&nbsp;&nbsp;{r.owner}</div>
-        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold',paddingLeft: '38mm', letterSpacing: '0.1em', marginTop: '17mm' }}>
+        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold',paddingLeft: '38mm', letterSpacing: '0.26em', marginTop: '17mm' }}>
           {info.office_zip ? formatZipSpaced(info.office_zip) : (zip || r.zip)}
         </div>
       </div>
