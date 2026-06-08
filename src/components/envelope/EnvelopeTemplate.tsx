@@ -16,7 +16,7 @@ export type GarudaSize = 'normal' | 'small'
 interface Props { records: EnvelopeData[]; size: EnvSize; officeInfo: OfficeInfo; showGaruda: boolean; garudaSize?: GarudaSize }
 
 const F: React.CSSProperties = {
-  fontFamily: "'TH Sarabun IT ๙', 'TH Sarabun New', 'TH Sarabun', sans-serif",
+  fontFamily: "'Sarabun','TH Sarabun IT ๙','Kanit',sans-serif",
   color: '#000', lineHeight: 1.2,
 }
 
@@ -252,7 +252,7 @@ function ARYellow({ r, info, isLast }: { r: EnvelopeData; info: OfficeInfo; show
   const upperPt     = '14pt'
   const upperZipFs  = '20pt'
   const lowerPt     = '18pt'
-  const lowerZipFs  = '24pt'
+  const lowerZipFs  = '20pt'
 
   const subDistLine = [
     r.address      ? r.address                     : '',
@@ -340,7 +340,7 @@ function ARBlue({ r, info, isLast }: { r: EnvelopeData; info: OfficeInfo; showGa
 const upperPt     = '14pt'
 const upperZipFs  = '20pt'
 const lowerPt     = '18pt'
-const lowerZipFs  = '24pt'
+const lowerZipFs  = '20pt'
 
   const { line1: addrLine1, line2: addrLine2 } = parseSenderAddress(info.office_address)
 
