@@ -312,7 +312,7 @@ function ARYellow({ r, info, isLast }: { r: EnvelopeData; info: OfficeInfo; show
         {addrLine1 && <div>{addrLine1}</div>}
         {addrLine2 && <div>{addrLine2}</div>}
         <div>ที่ {r.book_no}&nbsp;&nbsp;&nbsp;{r.owner}</div>
-        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold', letterSpacing: '0.15em', marginLeft: '38mm', marginTop: '22mm' }}>
+        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold', letterSpacing: '0.8em', marginLeft: '38mm', marginTop: '22mm' }}>
           {info.office_zip ? formatZipSpaced(info.office_zip) : (zip || r.zip)}
         </div>
       </div>
@@ -409,7 +409,7 @@ const lowerZipFs  = '24pt'
         {addrLine1 && <div>{addrLine1}</div>}
         {addrLine2 && <div>{addrLine2}</div>}
         <div>ที่ {r.book_no}&nbsp;&nbsp;&nbsp;{r.owner}</div>
-        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold',paddingLeft: '38mm', letterSpacing: '0.15em', marginTop: '17mm' }}>
+        <div style={{ fontSize: lowerZipFs, fontWeight: 'bold',paddingLeft: '38mm', letterSpacing: '0.8em', marginTop: '17mm' }}>
           {info.office_zip ? formatZipSpaced(info.office_zip) : (zip || r.zip)}
         </div>
       </div>
