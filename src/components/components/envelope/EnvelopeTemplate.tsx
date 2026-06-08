@@ -16,7 +16,7 @@ export type GarudaSize = 'normal' | 'small'
 interface Props { records: EnvelopeData[]; size: EnvSize; officeInfo: OfficeInfo; showGaruda: boolean; garudaSize?: GarudaSize }
 
 const F: React.CSSProperties = {
-  fontFamily: "'TH Sarabun IT ๙', 'TH Sarabun New', 'TH Sarabun', sans-serif",
+  fontFamily: "'AngsanaUPC','Angsana New','AngsanaUPC',serif",
   color: '#000', lineHeight: 1.2,
 }
 
@@ -25,7 +25,7 @@ function LicenseBox({ info, fontSize = 13, top = '8mm', right = '8mm' }: { info:
   return (
     <div style={{
       position: 'absolute', top, right,
-      border: '1.5pt solid #1149ff', padding: '2mm 5mm',borderRadius: '12px',
+      border: '1.5pt solid #000', padding: '2mm 5mm',
       textAlign: 'center', ...F, fontSize: `${fontSize}pt`, lineHeight: 1.4, minWidth: '45mm',
     }}>
       <div>ชำระค่าฝากส่งเป็นรายเดือน</div>

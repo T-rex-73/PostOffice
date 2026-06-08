@@ -1,0 +1,6 @@
+This file documents the UI changes to apply to page.tsx
+- AuthPage: ปรับ auth-overlay ให้ใช้ auth-split layout แบบ new design (two-panel)
+- Toast: ใช้ toast-success/error/info classes ใหม่ (brutalist border)
+- Header: เพิ่ม position:relative สำหรับ ::after gradient
+- HomePage: ใช้ feature-card class แทน neu-btn ในการ์ดหลัก
+- Buttons: ใช้ brutal-btn และ btn-primary/btn-teal

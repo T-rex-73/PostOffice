@@ -25,9 +25,9 @@ function Toast({ toasts }: { toasts: ToastItem[] }) {
   return (
     <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3">
       {toasts.map(t => (
-        <div key={t.id} className={`flex items-center gap-3 px-5 py-3 rounded-xl-sm font-bold text-white text-sm animate-fadeIn
-          ${t.type==='success'?'bg-success':t.type==='error'?'bg-primary':'bg-info'}`}>
-          <span className="material-icons text-base">{t.type==='success'?'check_circle':t.type==='error'?'error':'info'}</span>
+        <div key={t.id} className={`flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm animate-fadeIn border-2 border-black shadow-[3px_3px_0px_#111]
+          ${t.type==='success'?'toast-success':t.type==='error'?'toast-error':'toast-info'}`}>
+          <span className="material-icons text-base text-current">{t.type==='success'?'check_circle':t.type==='error'?'error':'info'}</span>
           {t.message}
         </div>
       ))}
@@ -57,8 +57,8 @@ function ExpirationModal({ user, onClose, onLogout }: { user: SessionUser; onClo
 
   if (expired) {
     return (
-      <div className="fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-slate-800 rounded-xl-sm w-full max-w-sm animate-fadeIn text-center p-8">
+      <div className="fixed inset-0 bg-black/40 z-[9999] flex items-center justify-center p-4">
+        <div className="w-full max-w-sm animate-fadeIn text-center p-8 glass-card">
           <div className="w-16 h-16 rounded-full bg-[#FFB6B9]/30 flex items-center justify-center mx-auto mb-4">
             <span className="material-icons text-2xl text-[#FFB6B9]">lock</span>
           </div>
@@ -75,7 +75,7 @@ function ExpirationModal({ user, onClose, onLogout }: { user: SessionUser; onClo
   // Warning: show when ≤ 7 days left
   return (
     <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-slate-800 rounded-xl-sm w-full max-w-sm animate-fadeIn text-center p-8">
+      <div className="w-full max-w-sm animate-fadeIn text-center p-8 glass-card">
         <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
           <span className="material-icons text-2xl text-amber-400">schedule</span>
         </div>
@@ -151,16 +151,48 @@ function AuthPage({ onLogin, addToast }: { onLogin:(u:SessionUser)=>void; addToa
   const lbl='block text-xs font-bold text-slate-500 mb-1'
   return (
     <div className="auth-overlay">
-      <div className="auth-card animate-fadeIn" style={{maxHeight:'90vh',overflowY:'auto'}}>
-        {/* Logo */}
-        <div className="text-center mb-5">
-          <img src="/logo.png" alt="PostOffice Logo" className="w-24 h-24 mx-auto mb-3 rounded-full  object-cover"/>
-          <span className="text-primary font-semibold text-xl leading-none tracking-tight">PostOffice</span>
-          <div className="text-[9px] text-secondary font-bold tracking-widest uppercase mt-1">ระบบบริหารจัดการงานไปรษณีย์</div>
+      <div className="auth-split animate-fadeIn max-w-3xl mx-4">
+        {/* Left panel — brand */}
+        <div className="auth-left hidden md:flex">
+          <div>
+            <div className="w-10 h-10 border-2 border-white/40 rounded-lg flex items-center justify-center mb-6">
+              <span className="text-white font-black text-lg leading-none">P</span>
+            </div>
+            <span className="section-label text-white/40">System v2.0</span>
+          </div>
+          <div className="my-auto">
+            <h1 className="text-3xl font-light leading-tight tracking-tight text-white mb-4">
+              จัดการงาน<br/><span className="font-black">ไปรษณีย์</span>
+            </h1>
+            <p className="text-white/50 text-xs leading-relaxed">
+              ระบบบริหารจัดการหนังสือราชการ<br/>ลงทะเบียน พิมพ์ซอง ติดตาม
+            </p>
+            <div className="mt-8 flex items-center gap-3">
+              <img src="/logo.png" alt="logo" className="w-8 h-8 rounded-md object-cover opacity-80"/>
+              <span className="text-white/70 font-bold text-sm tracking-wider">PostOffice</span>
+            </div>
+          </div>
+          <div className="section-label text-white/20">© 2026 ระบบจัดการส่งจดหมาย</div>
         </div>
-        <div className="flex mb-5 border-b border-slate-100">
-          <button onClick={()=>setTab('login')}    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${tab==='login'?'border-b-2 border-slate-800 text-slate-800 pb-2':'text-slate-400 pb-2'}`}>เข้าสู่ระบบ</button>
-          <button onClick={()=>setTab('register')} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${tab==='register'?'border-b-2 border-slate-800 text-slate-800 pb-2':'text-slate-400 pb-2'}`}>สมัครสมาชิก</button>
+        {/* Right panel — form */}
+        <div className="auth-right">
+          {/* Logo mobile only */}
+          <div className="flex items-center gap-2 mb-6 md:hidden">
+            <img src="/logo.png" alt="PostOffice Logo" className="w-8 h-8 rounded-lg object-cover"/>
+            <div>
+              <div className="text-primary font-bold text-sm leading-none">PostOffice</div>
+              <div className="section-label">ระบบบริหารจัดการ</div>
+            </div>
+          </div>
+        <div className="flex mb-6 gap-4 border-b-2 border-black/10 pb-0">
+          <button onClick={()=>setTab('login')} className={`pb-3 text-xs font-bold uppercase tracking-widest transition-all relative ${tab==='login'?'text-slate-900':'text-slate-400 hover:text-slate-600'}`}>
+            เข้าสู่ระบบ
+            {tab==='login'&&<div className="absolute -bottom-[2px] left-0 right-0 h-[3px] bg-[#111]"></div>}
+          </button>
+          <button onClick={()=>setTab('register')} className={`pb-3 text-xs font-bold uppercase tracking-widest transition-all relative ${tab==='register'?'text-slate-900':'text-slate-400 hover:text-slate-600'}`}>
+            สมัครสมาชิก
+            {tab==='register'&&<div className="absolute -bottom-[2px] left-0 right-0 h-[3px] bg-[#111]"></div>}
+          </button>
         </div>
 
         {tab==='login'?(
@@ -185,7 +217,7 @@ function AuthPage({ onLogin, addToast }: { onLogin:(u:SessionUser)=>void; addToa
                 <span className="text-xs font-bold text-slate-500">จดจำรหัสผ่าน</span>
               </label>
             </div>
-            <button onClick={handleLogin} disabled={loading} className="w-full bg-slate-800 text-white py-2.5 rounded-lg font-medium text-sm flex items-center justify-center gap-2 disabled:opacity-60 mt-2">
+            <button onClick={handleLogin} disabled={loading} className="w-full bg-[#111] text-white py-2.5 rounded-lg font-bold text-xs tracking-widest uppercase flex items-center justify-center gap-2 disabled:opacity-60 mt-2 border-2 border-[#111] shadow-[3px_3px_0px_#111] hover:shadow-[1px_1px_0px_#111] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
               {loading?<><div className="spinner"></div>กำลังเข้าสู่ระบบ...</>:<><span className="material-icons text-base">login</span>เข้าสู่ระบบ</>}
             </button>
           </div>
@@ -207,15 +239,16 @@ function AuthPage({ onLogin, addToast }: { onLogin:(u:SessionUser)=>void; addToa
                 </div>
               </div>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-xs border border-slate-100 dark:border-slate-700 text-[#8AC6D1] dark:text-[#BBDED6] flex items-start gap-2">
+            <div className="p-3 rounded-xl text-xs text-[#8AC6D1] flex items-start gap-2 neu-btn">
               <span className="material-icons text-sm mt-0.5">info</span>
               <span>ขั้นตอนถัดไป: หลังกรอกข้อมูลบัญชี คุณจะถูกพาไปกรอก <strong>ข้อมูลสำนักงาน</strong> ในหน้าถัดไป</span>
             </div>
-            <button onClick={handleRegister} disabled={loading} className="w-full bg-secondary text-white py-2.5 rounded-lg font-medium text-sm flex items-center justify-center gap-2 disabled:opacity-60">
+            <button onClick={handleRegister} disabled={loading} className="w-full py-2.5 rounded-lg font-bold text-xs tracking-widest uppercase flex items-center justify-center gap-2 disabled:opacity-60 border-2 border-[#8AC6D1] shadow-[3px_3px_0px_#8AC6D1] hover:shadow-[1px_1px_0px_#8AC6D1] hover:translate-x-[2px] hover:translate-y-[2px] transition-all btn-teal">
               {loading?<><div className="spinner"></div>กำลังตรวจสอบ...</>:<><span className="material-icons text-base">arrow_forward</span>ถัดไป: กรอกข้อมูลสำนักงาน</>}
             </button>
           </div>
         )}
+        </div>
       </div>
     </div>
   )
@@ -301,7 +334,7 @@ function AdminChatPanel({ currentUser }: { currentUser: SessionUser }) {
             <div className="px-4 py-2 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-100 dark:border-slate-700 flex-shrink-0">
               <p className="text-xs font-bold text-secondary">{getRoomLabel(activeRoom)}</p>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-2" style={{ background: '#f8fafc' }}>
+            <div className="flex-1 overflow-y-auto p-4 space-y-2" style={{ background: 'var(--neu-bg)' }}>
               {activeMsgs.map(m => {
                 const isMine = m.sender_role === 'global_admin'
                 return (
@@ -361,15 +394,15 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
   const pending=users.filter(u=>!u.approved)
   return (
     <div className="fixed inset-0 bg-black/50 z-[9000] flex items-start justify-center pt-10 px-4 overflow-y-auto">
-      <div className="bg-white dark:bg-slate-800 rounded-xl-sm w-full max-w-4xl mb-10 animate-fadeIn overflow-hidden">
+      <div className="w-full max-w-4xl mb-10 animate-fadeIn overflow-hidden glass-card">
         <div className="border-b border-slate-100 p-5 flex justify-between items-center">
-          <div><h2 className="text-xl font-bold  flex items-center gap-2"><span className="material-icons">admin_panel_settings</span>แผงผู้ดูแลระบบ</h2>
+          <div><h2 className="text-xl font-bold  flex items-center gap-2"><span className="material-icons">settings</span>การตั้งค่า</h2>
             <p className="text-xs text-slate-400 mt-1">จัดการผู้ใช้งานและสิทธิ์เข้าถึง</p></div>
           <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full"><span className="material-icons">close</span></button>
         </div>
-        <div className="flex border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
-          {[{key:'users',label:'ผู้ใช้ทั้งหมด',icon:'people',count:users.length},{key:'pending',label:'รออนุมัติ',icon:'pending',count:pending.length},{key:'chat',label:'แชท',icon:'chat',count:0}].map(t=>(
-            <button key={t.key} onClick={()=>setTab(t.key)} className={`flex items-center gap-2 px-6 py-3 text-sm font-bold transition-all ${tab===t.key?'border-slate-800 text-slate-800':'border-transparent text-slate-400'}`}>
+        <div className="flex border-b border-black/5 bg-black/5 dark:bg-white/5 overflow-x-auto">
+          {[{key:'users',label:'ผู้ใช้ทั้งหมด',icon:'people',count:users.length},{key:'pending',label:'รออนุมัติ',icon:'pending',count:pending.length},{key:'chat',label:'แชท',icon:'chat',count:0},{key:'settings',label:'สถานะ',icon:'dashboard',count:0}].map(t=>(
+            <button key={t.key} onClick={()=>setTab(t.key)} className={`flex items-center gap-2 px-5 py-3 text-sm font-bold transition-all whitespace-nowrap border-b-2 ${tab===t.key?'border-slate-800 text-slate-800':'border-transparent text-slate-400'}`}>
               <span className="material-icons text-base">{t.icon}</span>{t.label}
               {t.count>0&&<span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${t.key==='pending'&&t.count>0?'bg-[#FFB6B9] text-white':'bg-slate-200 text-slate-600'}`}>{t.count}</span>}
             </button>
@@ -378,6 +411,96 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
         <div className="p-6">
           {loading&&<div className="text-center py-10 text-slate-400"><div className="spinner" style={{borderTopColor:'#94a3b8',borderColor:'rgba(148,163,184,.3)',margin:'0 auto 8px'}}></div>โหลดข้อมูล...</div>}
           {tab==='chat'&&<AdminChatPanel currentUser={currentUser}/>}
+          {tab==='settings'&&(
+            <div className="settings-panel animate-fadeIn">
+              <div className="settings-panel-header">
+                <span className="material-icons text-slate-600">dashboard</span>
+                <h3 className="settings-panel-title">สถานะระบบ</h3>
+              </div>
+              <div className="settings-groups-grid">
+                {/* Group 1: Display */}
+                <div className="settings-group">
+                  <div className="settings-group-label"><span className="material-icons text-xs">palette</span>การแสดงผล</div>
+                  <div className="settings-items">
+                    <label className="settings-item">
+                      <div className="settings-item-info">
+                        <p className="settings-item-name">โหมดมืด</p>
+                        <p className="settings-item-desc">เปลี่ยนธีมเป็นโทนมืด</p>
+                      </div>
+                      <div className="settings-item-badge">ใช้ปุ่มบน Header</div>
+                    </label>
+                    <div className="settings-item">
+                      <div className="settings-item-info">
+                        <p className="settings-item-name">เวอร์ชันระบบ</p>
+                        <p className="settings-item-desc">PostOffice Management System</p>
+                      </div>
+                      <div className="settings-item-badge">v2.0</div>
+                    </div>
+                  </div>
+                </div>
+                {/* Group 2: Users */}
+                <div className="settings-group">
+                  <div className="settings-group-label"><span className="material-icons text-xs">people</span>ผู้ใช้งาน</div>
+                  <div className="settings-items">
+                    <div className="settings-item">
+                      <div className="settings-item-info">
+                        <p className="settings-item-name">จำนวนผู้ใช้ทั้งหมด</p>
+                        <p className="settings-item-desc">รวมทุกระดับสิทธิ์</p>
+                      </div>
+                      <div className="settings-item-badge">{users.length} คน</div>
+                    </div>
+                    <div className="settings-item">
+                      <div className="settings-item-info">
+                        <p className="settings-item-name">รออนุมัติ</p>
+                        <p className="settings-item-desc">ผู้ใช้ที่ยังรอการยืนยัน</p>
+                      </div>
+                      <div className={`settings-item-badge ${pending.length>0?'badge-warn':''}`}>{pending.length} คน</div>
+                    </div>
+                  </div>
+                </div>
+                {/* Group 3: Access */}
+                <div className="settings-group">
+                  <div className="settings-group-label"><span className="material-icons text-xs">lock</span>สิทธิ์การเข้าถึง</div>
+                  <div className="settings-items">
+                    <div className="settings-item">
+                      <div className="settings-item-info">
+                        <p className="settings-item-name">บทบาทปัจจุบัน</p>
+                        <p className="settings-item-desc">สิทธิ์ของบัญชีผู้ดูแลนี้</p>
+                      </div>
+                      <div className="settings-item-badge">{currentUser.role}</div>
+                    </div>
+                    <div className="settings-item">
+                      <div className="settings-item-info">
+                        <p className="settings-item-name">ชื่อสำนักงาน</p>
+                        <p className="settings-item-desc">หน่วยงานที่ดูแลระบบ</p>
+                      </div>
+                      <div className="settings-item-badge">{currentUser.office_name||'-'}</div>
+                    </div>
+                  </div>
+                </div>
+                {/* Group 4: System */}
+                <div className="settings-group">
+                  <div className="settings-group-label"><span className="material-icons text-xs">settings</span>ระบบ</div>
+                  <div className="settings-items">
+                    <div className="settings-item">
+                      <div className="settings-item-info">
+                        <p className="settings-item-name">ฐานข้อมูล</p>
+                        <p className="settings-item-desc">Supabase PostgreSQL</p>
+                      </div>
+                      <div className="settings-item-badge badge-ok">เชื่อมต่อแล้ว</div>
+                    </div>
+                    <div className="settings-item">
+                      <div className="settings-item-info">
+                        <p className="settings-item-name">API</p>
+                        <p className="settings-item-desc">Next.js App Router</p>
+                      </div>
+                      <div className="settings-item-badge badge-ok">พร้อมใช้งาน</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           {!loading&&tab==='pending'&&(
             <div>{pending.length===0?<div className="text-center py-10 text-slate-400"><span className="material-icons text-2xl block mb-2">check_circle</span>ไม่มีรายการรออนุมัติ</div>:
               <div className="space-y-3">{pending.map(u=>(
@@ -394,10 +517,10 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
           )}
           {!loading&&tab==='users'&&(
             <div className="overflow-x-auto"><table className="w-full text-sm">
-              <thead className="bg-slate-50 dark:bg-slate-700/50 text-slate-400 text-[10px] uppercase font-bold">
+              <thead className="bg-black/5 dark:bg-white/5 text-slate-500 text-[10px] uppercase font-bold">
                 <tr><th className="px-4 py-3 text-left">ชื่อ / ผู้ใช้</th><th className="px-4 py-3">สำนักงาน</th><th className="px-4 py-3">บทบาท</th><th className="px-4 py-3">สถานะ</th><th className="px-4 py-3">ระยะเวลา</th><th className="px-4 py-3">จัดการ</th></tr>
               </thead>
-              <tbody className="divide-y divide-slate-50 dark:divide-slate-700">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-700 queue-grid-body">
                 {users.map(u=>{
                   const expired = u.access_until && new Date(u.access_until) < new Date()
                   const daysLeft = u.access_until ? Math.ceil((new Date(u.access_until).getTime()-Date.now())/(1000*60*60*24)) : null
@@ -447,7 +570,7 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
       </div>
       {editUser&&(
         <div className="fixed inset-0 bg-black/60 z-[9100] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-sm shadow-sm animate-fadeIn">
+          <div className="rounded-2xl p-6 w-full max-w-sm animate-fadeIn glass-card">
             <h3 className="font-semibold text-slate-700 dark:text-white mb-3 ">แก้ไขข้อมูลผู้ใช้</h3>
             <div className="space-y-3">
               <div><label className="text-xs font-bold text-slate-400 mb-1 block">ชื่อ-นามสกุล</label><input value={editUser.name} onChange={e=>setEditUser({...editUser,name:e.target.value})} className="input-style text-sm"/></div>
@@ -462,7 +585,7 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
       )}
       {limitUser&&currentUser.role==='global_admin'&&(
         <div className="fixed inset-0 bg-black/60 z-[9100] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-sm shadow-sm animate-fadeIn">
+          <div className="rounded-2xl p-6 w-full max-w-sm animate-fadeIn glass-card">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center"><span className="material-icons text-slate-500">schedule</span></div>
               <div><h3 className="font-bold text-secondary dark:text-white ">ตั้งค่าระยะเวลาการใช้งาน</h3>
@@ -546,7 +669,7 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
 // ── Header ────────────────────────────────────────────────────────────────────
 function Header({ setPage, darkMode, setDarkMode, currentUser, onLogout, onAdminPanel }:any) {
   return (
-    <header className="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-50 h-14 flex items-center">
+    <header className="sticky top-0 z-50 h-14 flex items-center relative">
       <div className="max-w-7xl mx-auto px-4 w-full flex justify-between items-center">
         <div className="flex items-center cursor-pointer gap-4" onClick={()=>setPage('home')}>
           <img src="/logo.png" alt="PostOffice" className="w-8 h-8 rounded-lg object-cover"/>
@@ -562,11 +685,7 @@ function Header({ setPage, darkMode, setDarkMode, currentUser, onLogout, onAdmin
                 <span className="material-icons text-sm">{item.icon}</span>{item.label}
               </button>
             ))}
-            {/* LINE Chat Button */}
-            <a href="line://ti/p/@815cmnav" onClick={(e)=>{ e.preventDefault(); window.location.href='line://ti/p/@815cmnav'; setTimeout(()=>{ window.open('https://line.me/R/ti/p/@815cmnav','_blank') },1500) }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white transition-all" style={{background:'#06C755'}}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
-              LINE
-            </a>
+
           </nav>
           {canManage(currentUser?.role||'')&&<button onClick={onAdminPanel} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-primary transition-colors border border-slate-200 dark:border-slate-600 hover:bg-slate-50"><span className="material-icons text-sm">admin_panel_settings</span>{currentUser?.role==='global_admin'?'Global Admin':'Admin'}</button>}
           <div className="flex items-center gap-2 px-2.5 py-1 bg-slate-50 dark:bg-slate-700 rounded-md">
@@ -584,31 +703,51 @@ function Header({ setPage, darkMode, setDarkMode, currentUser, onLogout, onAdmin
 // ── Home Page ─────────────────────────────────────────────────────────────────
 function HomePage({ setPage }:{ setPage:(p:string)=>void }) {
   return (
-    <div className="animate-fadeIn py-10 text-center max-w-3xl mx-auto px-4">
-      <div className="flex flex-col items-center mb-8">
-        <img src="/logo.png" alt="PostOffice" className="w-24 h-24 rounded-full  mb-4 object-cover"/>
-        <h2 className="text-2xl font-semibold text-slate-700 dark:text-white mb-2">ระบบบริหารจัดการงานไปรษณีย์</h2>
+    <div className="animate-fadeIn home-page-wrapper">
+      {/* Hero tagline */}
+      <div className="home-hero">
+        <p className="home-hero-sub">ระบบบริหารจัดการ</p>
+        <h1 className="home-hero-title">งานไปรษณีย์<span className="font-black">.</span></h1>
       </div>
-      <div className="grid md:grid-cols-3 gap-4 mb-8">
-        {[{page:'register',icon:'edit_note',bg:'bg-[#FFB6B9]/20',ic:'text-primary',btn:'bg-[#FFB6B9]',label:'ลงทะเบียนหนังสือ'},
-          {page:'queue',icon:'print',bg:'bg-[#FAE3D9]/50',ic:'text-secondary',btn:'bg-[#8AC6D1]',label:'พิมพ์ / ติดตาม'},
-          {page:'track',icon:'search',bg:'bg-[#BBDED6]/30',ic:'text-success',btn:'bg-[#BBDED6]',label:'ค้นหาหนังสือ'}].map(item=>(
-          <div key={item.page} onClick={()=>setPage(item.page)} className="bg-white dark:bg-slate-800 p-8 rounded-xl  border border-slate-50 dark:border-slate-700 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors">
-            <div className={`w-12 h-12 ${item.bg} rounded-full flex items-center justify-center mx-auto mb-6`}><span className={`material-icons ${item.ic} text-2xl`}>{item.icon}</span></div>
-            <h3 className="text-sm font-semibold text-slate-700 dark:text-white mb-4">{item.label}</h3>
-            <div className={`${item.btn} text-white py-2 rounded-lg font-medium flex items-center justify-center gap-2 text-xs`}>เข้าใช้งาน →</div>
+
+      {/* Three feature cards – Image 1 style */}
+      <div className="home-cards-grid">
+        {[
+          {page:'register', icon:'edit_note',  label:'ลงทะเบียนหนังสือ', desc:'บันทึกรายการ พร้อมนำเข้า Excel อัตโนมัติ'},
+          {page:'queue',    icon:'print',       label:'พิมพ์ / ติดตาม',    desc:'เลือกรายการ ใส่เลขแท็ก พิมพ์ซอง PDF'},
+          {page:'track',    icon:'travel_explore', label:'ค้นหาหนังสือ',  desc:'ค้นหาด้วยชื่อ เลขที่ หรือเลขแท็ก'},
+        ].map((item,i)=>(
+          <div key={item.page} onClick={()=>setPage(item.page)} className="home-feature-card" style={{animationDelay:`${i*0.08}s`}}>
+            <div className="home-card-icon-wrap">
+              <div className="home-card-icon-neu">
+                <span className="material-icons">{item.icon}</span>
+              </div>
+            </div>
+            <h3 className="home-card-title">{item.label}</h3>
+            <p className="home-card-desc">{item.desc}</p>
           </div>
         ))}
       </div>
-      {/* LINE Button on Home */}
-      <a href="line://ti/p/@815cmnav" onClick={(e)=>{ e.preventDefault(); window.location.href='line://ti/p/@815cmnav'; setTimeout(()=>{ window.open('https://line.me/R/ti/p/@815cmnav','_blank') },1500) }} className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl font-bold text-sm text-white  transition-all hover:opacity-90" style={{background:'#06C755'}}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
-        สอบถามผ่าน LINE
-      </a>
+
+      {/* Why-brands-keep-coming-back row – Image 1 bottom */}
+      <div className="home-why-row">
+        {[
+          {icon:'check_circle_outline', label:'ออกแบบมาเพื่อใช้จริง',     sub:'รวดเร็ว ยืดหยุ่น พร้อมรองรับทุกขนาด'},
+          {icon:'psychology',           label:'ใส่ใจ ไม่ตามกระแส',         sub:'ระบบตั้งใจออกแบบ ไม่ใช่แค่ฟีเจอร์สวยงาม'},
+          {icon:'bolt',                 label:'เร็ว ไม่มีความวุ่นวาย',     sub:'กระบวนการกระชับ สะอาด ไม่มีขั้นตอนเกิน'},
+        ].map(w=>(
+          <div key={w.label} className="home-why-card">
+            <span className="material-icons home-why-icon">{w.icon}</span>
+            <div>
+              <p className="home-why-title">{w.label}</p>
+              <p className="home-why-sub">{w.sub}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
-
 // ── Address Dropdowns ─────────────────────────────────────────────────────────
 function AddressDropdowns({ locations, form, setForm, disabled }:any) {
   const provinces    = useMemo(() => Array.from(new Set<string>(locations.map((l:any)=>l.province?.trim()).filter(Boolean) as string[])).sort((a,b)=>a.localeCompare(b,'th')), [locations])
@@ -856,11 +995,15 @@ function RegisterPage({ setPage, locations, refresh, addToast, currentUser }:any
 
   const lbl='block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1'
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 animate-fadeIn">
-      <button onClick={()=>setPage('home')} className="flex items-center gap-1 text-slate-400 hover:text-slate-600 mb-4 text-xs"><span className="material-icons text-base">arrow_back</span>ย้อนกลับ</button>
-      <div className="flex flex-wrap items-center justify-between mb-6 gap-3">
-        <h2 className="text-lg font-semibold text-slate-700 dark:text-white flex items-center gap-2"><span className="material-icons text-slate-400">edit_note</span>ลงทะเบียนหนังสือ</h2>
-        <div className="flex items-center gap-2 flex-wrap">
+    <div className="page-content-wrapper animate-fadeIn">
+      <div className="page-inner-header">
+        <button onClick={()=>setPage('home')} className="page-back-btn"><span className="material-icons text-base">arrow_back</span>ย้อนกลับ</button>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="page-sub-label">ระบบบริหารจัดการ</p>
+            <h2 className="page-main-heading"><span className="material-icons text-slate-300 text-2xl align-middle mr-2">edit_note</span>ลงทะเบียน<span>หนังสือ</span></h2>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
           {locked&&(
             <>
               <button type="button" onClick={handleNew} className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-white bg-[#8AC6D1] hover:opacity-80 transition-all">
@@ -881,10 +1024,10 @@ function RegisterPage({ setPage, locations, refresh, addToast, currentUser }:any
             {excelLoading?<><div className="spinner"></div>กำลังนำเข้า...</>:<><span className="material-icons text-base">upload_file</span>นำเข้า Excel</>}
           </label>
         </div>
+        </div>
       </div>
-
       {locked&&!editMode&&(
-        <div className="mb-4 p-3 bg-slate-50 border border-slate-100 rounded-lg text-[#4a9d8c] flex items-center gap-2 text-xs font-medium">
+        <div className="mb-4 p-3 bg-[#BBDED6]/20 border-2 border-[#4a9d8c] rounded-lg text-[#4a9d8c] flex items-center gap-2 text-xs font-bold shadow-[2px_2px_0px_#4a9d8c]">
           <span className="material-icons text-base">lock</span>
           บันทึกเรียบร้อยแล้ว — กด <strong>เพิ่มใหม่</strong> เพื่อกรอกรายการถัดไป หรือ <strong>แก้ไข</strong> เพื่อแก้ไขข้อมูล
         </div>
@@ -895,12 +1038,12 @@ function RegisterPage({ setPage, locations, refresh, addToast, currentUser }:any
         </div>
       )}
 
-      <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-xs border border-slate-100 dark:border-slate-700 text-[#8AC6D1] dark:text-[#BBDED6] flex items-start gap-2">
+      <div className="mb-4 p-3 bg-[#8AC6D1]/10 rounded-lg text-xs border-l-4 border-[#8AC6D1] text-[#4a7a86] flex items-start gap-2">
         <span className="material-icons text-sm mt-0.5">info</span>
         <span>ดาวน์โหลดฟอร์ม <strong>กรอกรายละเอียด</strong> ชื่อผู้รับ , ถึง , ที่อยู่ , ตำบล , อำเภอ , จังหวัด , รหัสไปรษณีย์ , เจ้าของเรื่อง , เลขที่หนังสือ , จำนวน , ประเภท  ลงในฟอร์มให้เรียบร้อยค่อยอัพโหลดไฟล์ excel</span>
       </div>
 
-      <form onSubmit={submit} className="border border-slate-100 dark:border-slate-700 rounded-xl p-6 space-y-5 bg-white dark:bg-slate-800">
+      <form onSubmit={submit} className="rounded-2xl p-6 space-y-5 glass-card">
         <div className="flex flex-col md:flex-row gap-6 pb-6 border-b border-slate-100 dark:border-slate-700">
           <div className="flex items-center gap-3">
             <span className="text-xs font-bold text-slate-400 uppercase">ประเภท</span>
@@ -969,7 +1112,7 @@ function RegisterPage({ setPage, locations, refresh, addToast, currentUser }:any
           <button type="button" onClick={()=>setPage('home')} className="px-5 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-400">ยกเลิก</button>
           <div className="flex gap-3">
             {!isDisabled&&(
-              <button type="submit" disabled={loading} className="bg-slate-800 text-white px-8 py-2.5 rounded-lg font-medium text-sm flex items-center gap-2 disabled:opacity-50">
+              <button type="submit" disabled={loading} className="brutal-btn px-8 py-2.5 text-sm disabled:opacity-50">
                 {loading?<><div className="spinner"></div>{editMode?'กำลังแก้ไข...':'บันทึก...'}</>:<><span className="material-icons text-base">{editMode?'save':'save'}</span>{editMode?'บันทึกการแก้ไข':'บันทึก'}</>}
               </button>
             )}
@@ -999,6 +1142,7 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
   const [excelExporting,setExcelExporting]=useState(false)
   const [sortBy,setSortBy]=useState<string>('date_desc') // NEW: sort state
   const [deleting,setDeleting]=useState(false) // NEW: delete state
+  const [viewMode,setViewMode]=useState<'list'|'grid'>('list')
   const inputRefs=useRef<Record<number,HTMLInputElement>>({})
 
   const clearFilters=()=>{setDateFrom('');setDateTo('');setOwnerFilter('');setTagFilter('all')}
@@ -1171,30 +1315,13 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
   const untaggedCount=useMemo(()=>records.filter((r:any)=>!r['__เลขแท็กER']).length,[records])
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 animate-fadeIn">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div className="page-content-wrapper animate-fadeIn">
+      <div className="page-inner-header">
+        <button onClick={()=>setPage('home')} className="page-back-btn"><span className="material-icons text-base">arrow_back</span>ย้อนกลับ</button>
         <div>
-          <h2 className="text-3xl font-bold text-secondary dark:text-white ">พิมพ์หนังสือ</h2>
+          <p className="page-sub-label">ระบบบริหารจัดการ</p>
+          <h2 className="page-main-heading">พิมพ์<span>หนังสือ</span></h2>
           <p className="text-slate-400 text-sm mt-1">เลือกรายการ → กรอกเลขแท็ก → Enter รันต่ออัตโนมัติ</p>
-        </div>
-        <div className="bg-white dark:bg-slate-800 px-5 py-3 rounded-xl border border-slate-100 dark:border-slate-700 flex flex-wrap gap-4 items-center ">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-slate-400 uppercase">กระดาษ</span>
-            <div className="flex gap-0.5">
-              {[{key:'DL',label:'DL'},{key:'A4',label:'A4'},{key:'A4FOLD',label:'A4 พับหลัง'}].map(s=>(
-                <button key={s.key} onClick={()=>setPaperSize(s.key)} className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors whitespace-nowrap ${paperSize===s.key?'bg-secondary text-white':'bg-slate-100 dark:bg-slate-700 text-slate-500'}`}>{s.label}</button>
-              ))}
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-slate-400 uppercase whitespace-nowrap">เลขเริ่มต้น</span>
-            <div className="tr-wrap">
-              <input value={trackPrefix} onChange={e=>setTrackPrefix(e.target.value.replace(/[^a-zA-Z]/g,'').toUpperCase().substring(0,2))} className="tr-pre-inp" maxLength={2} placeholder="ER"/>
-              <input value={startNum} onChange={e=>setStartNum(e.target.value.replace(/\D/g,'').substring(0,8))} className="tr-inp" style={{width:'76px'}} placeholder="12340001" maxLength={8}/>
-              <span className="tr-suf">TH</span>
-            </div>
-            <button onClick={autoFill} className="px-2.5 py-1 bg-info text-white text-xs font-bold rounded-lg flex items-center gap-1"><span className="material-icons text-xs">auto_fix_high</span>อัตโนมัติ</button>
-          </div>
         </div>
       </div>
 
@@ -1227,7 +1354,7 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
             </div>
           </div>
           <div className="flex items-center gap-2 self-end">
-            <button onClick={loadRecords} disabled={loadingData} className="flex items-center gap-1 bg-secondary text-white px-4 py-2 rounded-lg text-xs font-bold disabled:opacity-60">
+            <button onClick={loadRecords} disabled={loadingData} className="flex items-center gap-1 btn-teal px-4 py-2 rounded-lg text-xs font-bold disabled:opacity-60">
               {loadingData?<><div className="spinner"></div>โหลด...</>:<><span className="material-icons text-xs">search</span>ค้นหา</>}
             </button>
             <button onClick={clearFilters} className="text-xs text-slate-400 hover:text-primary font-bold flex items-center gap-0.5 px-2 py-2"><span className="material-icons text-xs">clear</span>ล้าง</button>
@@ -1256,11 +1383,42 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
 
       {/* Table */}
       <div className="glass-card  mb-8">
-        <div className="p-5 border-b border-slate-50 dark:border-slate-700 flex flex-wrap justify-between items-center gap-3 bg-slate-50/50">
-          <h3 className="font-bold text-secondary dark:text-white flex items-center gap-2 ">
-            <span className="material-icons text-primary text-base">list_alt</span>รายชื่อผู้รับ
-            <span className="bg-slate-800 text-white text-[10px] px-2 py-0.5 rounded-full">{sortedRecords.length}</span>
-          </h3>
+        <div className="p-5 border-b border-black/5 flex flex-wrap justify-between items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <h3 className="font-bold text-secondary dark:text-white flex items-center gap-2">
+              <span className="material-icons text-primary text-base">list_alt</span>รายชื่อผู้รับ
+              <span className="bg-slate-800 text-white text-[10px] px-2 py-0.5 rounded-full">{sortedRecords.length}</span>
+            </h3>
+            {/* View Mode Toggle */}
+            <div className="view-toggle">
+              <button onClick={()=>setViewMode('list')} className={`view-toggle-btn ${viewMode==='list'?'active':''}`} title="มุมมองรายการ">
+                <span className="material-icons text-sm">view_list</span>
+              </button>
+              <button onClick={()=>setViewMode('grid')} className={`view-toggle-btn ${viewMode==='grid'?'active':''}`} title="มุมมองตาราง">
+                <span className="material-icons text-sm">grid_view</span>
+              </button>
+            </div>
+            {/* ── Paper & Tag-prefix panel ── */}
+            <div className="flex items-center gap-3 pl-3 border-l border-slate-100 dark:border-slate-700 flex-wrap">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">กระดาษ</span>
+                <div className="flex gap-0.5">
+                  {[{key:'DL',label:'DL'},{key:'A4',label:'A4'},{key:'A4FOLD',label:'A4 พับหลัง'}].map(s=>(
+                    <button key={s.key} onClick={()=>setPaperSize(s.key)} className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-colors whitespace-nowrap ${paperSize===s.key?'bg-secondary text-white':'bg-slate-100 dark:bg-slate-700 text-slate-500'}`}>{s.label}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">เลขเริ่มต้น</span>
+                <div className="tr-wrap">
+                  <input value={trackPrefix} onChange={e=>setTrackPrefix(e.target.value.replace(/[^a-zA-Z]/g,'').toUpperCase().substring(0,2))} className="tr-pre-inp" maxLength={2} placeholder="ER"/>
+                  <input value={startNum} onChange={e=>setStartNum(e.target.value.replace(/\D/g,'').substring(0,8))} className="tr-inp" style={{width:'72px'}} placeholder="12340001" maxLength={8}/>
+                  <span className="tr-suf">TH</span>
+                </div>
+                <button onClick={autoFill} className="px-2 py-1 bg-info text-white text-[11px] font-bold rounded-lg flex items-center gap-0.5"><span className="material-icons text-xs">auto_fix_high</span>อัตโนมัติ</button>
+              </div>
+            </div>
+          </div>
           <div className="flex gap-2 items-center flex-wrap">
             {/* Sort Dropdown */}
             <div className="flex items-center gap-1.5">
@@ -1288,25 +1446,27 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
             )}
           </div>
         </div>
+        {/* ── List View (table) ── */}
+        {viewMode==='list'&&(
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 dark:bg-slate-700/50 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-              <tr>
-                <th className="p-4 w-8"></th><th className="px-3 py-4">#</th>
-                <th className="px-3 py-4">ชื่อผู้รับ / ถึง</th><th className="px-3 py-4">เลขที่หนังสือ</th>
-                <th className="px-3 py-4">จังหวัด</th><th className="px-3 py-4">ประเภท</th>
-                <th className="px-3 py-4">เจ้าของเรื่อง</th><th className="px-3 py-4">วันที่</th>
-                <th className="px-3 py-4" style={{minWidth:'260px'}}>เลขแท็ก (13 ตัว)</th>
+            <thead className="bg-black/5 dark:bg-white/5 text-slate-500 text-[10px] font-bold uppercase tracking-wider queue-grid-head">
+              <tr className="queue-grid-row">
+                <th className="p-4 w-8 queue-grid-cell"></th><th className="px-3 py-4 queue-grid-cell">#</th>
+                <th className="px-3 py-4 queue-grid-cell">ชื่อผู้รับ / ถึง</th><th className="px-3 py-4 queue-grid-cell">เลขที่หนังสือ</th>
+                <th className="px-3 py-4 queue-grid-cell">จังหวัด</th><th className="px-3 py-4 queue-grid-cell">ประเภท</th>
+                <th className="px-3 py-4 queue-grid-cell">เจ้าของเรื่อง</th><th className="px-3 py-4 queue-grid-cell">วันที่</th>
+                <th className="px-3 py-4 queue-grid-cell" style={{minWidth:'260px'}}>เลขแท็ก (13 ตัว)</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50 dark:divide-slate-700">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700 queue-grid-body">
               {pagedRecords.map((r:any,rowIndex:number)=>{
                 const isSelected=selected.has(r.rowId)
                 const {prefix,num8,cd,isComplete,full}=getTrackParts(r)
                 const hasExisting=!!r['__เลขแท็กER']
                 return (
-                  <tr key={r.rowId} onClick={()=>toggleRow(r.rowId)} className={`cursor-pointer transition-all hover:bg-slate-50 dark:hover:bg-slate-700/30 ${isSelected?'bg-blue-50 dark:bg-blue-900/20':''}`}>
-                    <td className="p-4"><div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${isSelected?'bg-secondary border-secondary':'border-slate-200'}`}>{isSelected&&<span className="material-icons text-white text-xs">check</span>}</div></td>
+                  <tr key={r.rowId} onClick={()=>toggleRow(r.rowId)} className={`cursor-pointer transition-all hover:bg-slate-50 dark:hover:bg-slate-700/30 queue-grid-row ${isSelected?'bg-blue-50 dark:bg-blue-900/20':''}`}>
+                    <td className="p-4 queue-grid-cell"><div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${isSelected?'bg-secondary border-secondary':'border-slate-200'}`}>{isSelected&&<span className="material-icons text-white text-xs">check</span>}</div></td>
                     <td className="px-3 py-4 text-center text-xs text-slate-400">{(currentPage-1)*PAGE_SIZE+rowIndex+1}</td>
                     <td className="px-3 py-4"><div className="font-bold text-slate-800 dark:text-white text-xs">{r['__ชื่อผู้รับ']}</div>{r['__ถึง']&&<div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-[180px]" title={r['__ถึง']}>{r['__ถึง']}</div>}{r['__ที่อยู่สำนักงาน']&&<div className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 truncate max-w-[180px]" title={r['__ที่อยู่สำนักงาน']}>{r['__ที่อยู่สำนักงาน']}</div>}</td>
                     <td className="px-3 py-4 text-xs font-mono text-slate-600 dark:text-slate-300">{r['__เลขที่หนังสือ']}</td>
@@ -1332,6 +1492,57 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
             </tbody>
           </table>
         </div>
+        )}
+
+        {/* ── Grid View (cards) ── */}
+        {viewMode==='grid'&&(
+        <div className="p-4 grid-view-container">
+          <div className="queue-grid-cards">
+            {pagedRecords.map((r:any,rowIndex:number)=>{
+              const isSelected=selected.has(r.rowId)
+              const {prefix,num8,cd,isComplete,full}=getTrackParts(r)
+              const hasExisting=!!r['__เลขแท็กER']
+              return (
+                <div key={r.rowId} onClick={()=>toggleRow(r.rowId)}
+                  className={`queue-grid-card ${isSelected?'selected':''}`}>
+                  {/* Card header */}
+                  <div className="queue-grid-card-header">
+                    <div className={`queue-grid-card-check ${isSelected?'checked':''}`}>
+                      {isSelected&&<span className="material-icons text-white text-xs">check</span>}
+                    </div>
+                    <span className={`queue-grid-card-type ${r['__ประเภท']==='EMS'?'ems':''}`}>{r['__ประเภท']||'ธรรมดา'}</span>
+                    <span className="queue-grid-card-date">{r['__วันที่']}</span>
+                  </div>
+                  {/* Recipient */}
+                  <div className="queue-grid-card-recipient">
+                    <p className="queue-grid-card-name">{r['__ชื่อผู้รับ']}</p>
+                    {r['__ถึง']&&<p className="queue-grid-card-dept">{r['__ถึง']}</p>}
+                  </div>
+                  {/* Meta row */}
+                  <div className="queue-grid-card-meta">
+                    <span className="queue-grid-card-bookno">{r['__เลขที่หนังสือ']}</span>
+                    <span className="queue-grid-card-province">{r['__จังหวัด']}</span>
+                  </div>
+                  {r['__เจ้าของเรื่อง']&&<p className="queue-grid-card-owner">{r['__เจ้าของเรื่อง']}</p>}
+                  {/* Tracking input */}
+                  <div className="queue-grid-card-tracking" onClick={e=>e.stopPropagation()}>
+                    <div className="tr-wrap">
+                      <input value={prefix} onChange={e=>{const v=e.target.value.replace(/[^a-zA-Z]/g,'').toUpperCase().substring(0,2);setTrackingData(prev=>({...prev,[r.rowId]:{...prev[r.rowId],prefix:v,num8:prev[r.rowId]?.num8||num8,cd:prev[r.rowId]?.cd||cd}}))}} className="tr-pre-inp" maxLength={2}/>
+                      <input ref={el=>{if(el)inputRefs.current[r.rowId]=el}} value={num8}
+                        onChange={e=>{const v=e.target.value.replace(/\D/g,'').substring(0,8);const autocd=v.length===8?calcCheckDigit(v):'';setTrackingData(prev=>({...prev,[r.rowId]:{...prev[r.rowId],prefix:prev[r.rowId]?.prefix||prefix,num8:v,cd:autocd||prev[r.rowId]?.cd||''}}))}}
+                        onKeyDown={e=>handleNum8KeyDown(e,r.rowId,rowIndex)} className="tr-inp" style={{width:'72px'}} maxLength={8} placeholder="12340001"/>
+                      <input value={cd} onChange={e=>{const v=e.target.value.replace(/\D/g,'').substring(0,1);setTrackingData(prev=>({...prev,[r.rowId]:{...prev[r.rowId],prefix:prev[r.rowId]?.prefix||prefix,num8:prev[r.rowId]?.num8||num8,cd:v}}))}} className="tr-inp" style={{width:'22px',background:'#e8f8f5',color:'#4a9d8c',fontWeight:700}} maxLength={1}/>
+                      <span className="tr-suf">TH</span>
+                    </div>
+                    {isComplete&&<div className="text-[10px] font-mono text-success mt-1 font-bold">{full}</div>}
+                    {hasExisting&&!isComplete&&<div className="text-[10px] font-mono text-info mt-1 truncate">{r['__เลขแท็กER']}</div>}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+        )}
         {totalPages>1&&(
           <div className="p-4 border-t border-slate-50 dark:border-slate-700 flex items-center justify-between">
             <span className="text-xs text-slate-400">หน้า {currentPage} / {totalPages}</span>
@@ -1390,13 +1601,19 @@ function TrackPage({ addToast, currentUser }:any) {
   const sLabel=(r:any)=>hasTag(r)?'จัดส่งแล้ว':'รอจัดส่ง'
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 animate-fadeIn space-y-6">
-      <h2 className="text-lg font-semibold text-slate-700 dark:text-white flex items-center gap-2"><span className="material-icons text-primary">search</span>ค้นหาหนังสือ</h2>
+    <div className="page-content-wrapper animate-fadeIn space-y-6">
+      <div className="page-inner-header">
+        <button onClick={()=>(window.history.back())} className="page-back-btn"><span className="material-icons text-base">arrow_back</span>ย้อนกลับ</button>
+        <div>
+          <p className="page-sub-label">ระบบบริหารจัดการ</p>
+          <h2 className="page-main-heading"><span className="material-icons text-slate-300 text-2xl align-middle mr-2">travel_explore</span>ค้นหา<span>หนังสือ</span></h2>
+        </div>
+      </div>
       <div className="glass-card p-5">
         <div className="flex gap-3">
           <div className="relative flex-1"><span className="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-base">search</span>
             <input value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>e.key==='Enter'&&doSearch()} className="input-style pl-10 text-sm" placeholder="ค้นหาด้วยเลขที่หนังสือ, ชื่อผู้รับ, เลขแท็ก, เจ้าของเรื่อง..."/></div>
-          <button onClick={doSearch} disabled={loading} className="bg-secondary text-white px-6 py-2 rounded-lg font-medium text-sm flex items-center gap-2 disabled:opacity-50">
+          <button onClick={doSearch} disabled={loading} className="btn-teal px-6 py-2 rounded-lg font-medium text-sm flex items-center gap-2 disabled:opacity-50">
             {loading?<><div className="spinner"></div>ค้นหา...</>:<><span className="material-icons text-sm">search</span>ค้นหา</>}
           </button>
         </div>
@@ -1411,7 +1628,7 @@ function TrackPage({ addToast, currentUser }:any) {
             <thead className="bg-slate-50 dark:bg-slate-700/50 text-slate-400 text-[10px] font-bold uppercase">
               <tr><th className="px-5 py-3 text-left">ชื่อผู้รับ / จังหวัด</th><th className="px-5 py-3">เลขที่หนังสือ</th><th className="px-5 py-3">เจ้าของเรื่อง</th><th className="px-5 py-3">วันที่</th><th className="px-5 py-3">สถานะ</th><th className="px-5 py-3"></th></tr>
             </thead>
-            <tbody className="divide-y divide-slate-50 dark:divide-slate-700">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700 queue-grid-body">
               {results.map((r:any)=>(
                 <tr key={r.rowId} onClick={()=>setSelected(selected?.rowId===r.rowId?null:r)} className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-all">
                   <td className="px-5 py-4"><div className="font-bold text-xs">{r['__ชื่อผู้รับ']}</div><div className="text-[10px] text-slate-400">{r['__จังหวัด']}</div></td>
@@ -1588,7 +1805,7 @@ function ChatWidget({ currentUser }: { currentUser: SessionUser | null }) {
       {/* ── Chat Panel ── */}
       {open && (
         <div className="fixed bottom-24 right-6 z-[9800] w-80 md:w-96 flex flex-col rounded-xl-sm overflow-hidden animate-fadeIn"
-          style={{ height: '480px', background: 'white', border: '1px solid #e2e8f0' }}>
+          style={{ height: '480px', background: 'var(--neu-bg)', boxShadow: '12px 12px 30px #c5c5c5, -12px -12px 30px #ffffff', borderRadius: '20px', border: 'none', overflow: 'hidden' }}>
 
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 text-white flex-shrink-0"
@@ -1627,7 +1844,7 @@ function ChatWidget({ currentUser }: { currentUser: SessionUser | null }) {
           )}
 
           {/* Messages area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ background: '#f8fafc' }}>
+          <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ background: 'var(--neu-bg)' }}>
             {msgs.length === 0 && (
               <div className="text-center py-8">
                 <span className="material-icons text-2xl text-slate-200 block mb-2">chat_bubble_outline</span>
@@ -1762,7 +1979,7 @@ export default function App() {
   const expired=isAccessExpired(currentUser.access_until)
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 transition-colors">
+    <div className="min-h-screen flex flex-col transition-colors">
       <Header setPage={setPage} darkMode={darkMode} setDarkMode={setDarkMode} currentUser={currentUser} onLogout={handleLogout} onAdminPanel={()=>setShowAdmin(true)}/>
       <main className="flex-grow">
         {page==='home'     &&<HomePage     setPage={setPage}/>}
@@ -1770,7 +1987,13 @@ export default function App() {
         {page==='queue'    &&<QueuePage    setPage={setPage} addToast={addToast} currentUser={currentUser}/>}
         {page==='track'    &&<TrackPage    setPage={setPage} addToast={addToast} currentUser={currentUser}/>}
       </main>
-      <footer className="py-5 border-t border-slate-100 dark:border-slate-800 text-center text-slate-300 text-[9px] uppercase tracking-widest">© 2026 ระบบจัดการส่งจดหมาย — PostOffice</footer>
+      <footer className="py-4 text-center border-t-2 border-black/5">
+        <div className="flex items-center justify-center gap-6">
+          <div className="w-8 h-[1px] bg-black/20"></div>
+          <span className="section-label text-slate-400">© 2026 ระบบจัดการส่งจดหมาย — PostOffice</span>
+          <div className="w-8 h-[1px] bg-black/20"></div>
+        </div>
+      </footer>
       <Toast toasts={toasts}/>
       {showAdmin&&canManage(currentUser?.role||'')&&<AdminPanel currentUser={currentUser} addToast={addToast} onClose={()=>setShowAdmin(false)}/>}
       {showExpModal&&currentUser&&<ExpirationModal user={currentUser} onClose={()=>setShowExpModal(false)} onLogout={handleLogout}/>}
