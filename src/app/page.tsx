@@ -5,6 +5,7 @@ import { calcCheckDigit } from '@/lib/utils'
 
 const REMEMBER_KEY = 'thpost_remember'
 const SESSION_KEY  = 'thpost_session'
+const DONATE_KEY   = 'thpost_donated'  // '1' = user has already paid
 const PAGE_KEY     = 'thpost_page'
 const htmlDateToThai = (s: string) => { if (!s) return ''; const [y,m,d]=s.split('-'); return `${d}/${m}/${y}` }
 
@@ -104,6 +105,8 @@ function AuthPage({ onLogin, addToast }: { onLogin:(u:SessionUser)=>void; addToa
   const [loading,setLoading]=useState(false)
   // Email login mode (vs username)
   const [loginMode,setLoginMode]=useState<'username'|'email'>('username')
+  const [termsAccepted,setTermsAccepted]=useState(false)
+  const [showPrivacy,setShowPrivacy]=useState(false)
 
   useEffect(()=>{ try{ const s=localStorage.getItem(REMEMBER_KEY); if(s){const p=JSON.parse(s);setLf({username:p.username||'',password:p.password||''});setRm(true)} }catch{} },[])
 
@@ -134,6 +137,7 @@ function AuthPage({ onLogin, addToast }: { onLogin:(u:SessionUser)=>void; addToa
 
   const handleRegister=async()=>{
     if(!rf.name||!rf.username||!rf.password){addToast('กรุณากรอกข้อมูลให้ครบ','error');return}
+    if(!termsAccepted){addToast('กรุณายอมรับนโยบายความเป็นส่วนตัวก่อนสมัครสมาชิก','error');return}
     if(rf.password!==rf.confirm){addToast('รหัสผ่านไม่ตรงกัน','error');return}
     if(rf.password.length<6){addToast('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร','error');return}
     setLoading(true)
@@ -211,10 +215,14 @@ function AuthPage({ onLogin, addToast }: { onLogin:(u:SessionUser)=>void; addToa
                 <button type="button" className="pw-eye" onClick={()=>setShowPw(!showPw)} tabIndex={-1}><span className="material-icons text-base">{showPw?'visibility_off':'visibility'}</span></button>
               </div>
             </div>
-            <div className="flex items-center justify-between py-1">
-              <label className="flex items-center gap-2.5 cursor-pointer select-none" onClick={()=>setRm(v=>!v)}>
-                <div className="toggle-track" style={{background:rm?'#8AC6D1':'#e2e8f0'}}><div className="toggle-thumb" style={{transform:rm?'translateX(16px)':'translateX(0)'}}/></div>
-                <span className="text-xs font-bold text-slate-500">จดจำรหัสผ่าน</span>
+            <div className="flex items-center py-1">
+              <label className="flex items-center gap-2.5 cursor-pointer select-none group">
+                <div
+                  onClick={()=>setRm(v=>!v)}
+                  className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all cursor-pointer flex-shrink-0 ${rm?'bg-[#111] border-[#111]':'border-slate-300 group-hover:border-slate-400'}`}>
+                  {rm&&<span className="material-icons text-white" style={{fontSize:'10px'}}>check</span>}
+                </div>
+                <span onClick={()=>setRm(v=>!v)} className="text-xs font-bold text-slate-500 select-none">จดจำรหัสผ่าน</span>
               </label>
             </div>
             <button onClick={handleLogin} disabled={loading} className="w-full bg-[#111] text-white py-2.5 rounded-lg font-bold text-xs tracking-widest uppercase flex items-center justify-center gap-2 disabled:opacity-60 mt-2 border-2 border-[#111] shadow-[3px_3px_0px_#111] hover:shadow-[1px_1px_0px_#111] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
@@ -243,7 +251,85 @@ function AuthPage({ onLogin, addToast }: { onLogin:(u:SessionUser)=>void; addToa
               <span className="material-icons text-sm mt-0.5">info</span>
               <span>ขั้นตอนถัดไป: หลังกรอกข้อมูลบัญชี คุณจะถูกพาไปกรอก <strong>ข้อมูลสำนักงาน</strong> ในหน้าถัดไป</span>
             </div>
-            <button onClick={handleRegister} disabled={loading} className="w-full py-2.5 rounded-lg font-bold text-xs tracking-widest uppercase flex items-center justify-center gap-2 disabled:opacity-60 border-2 border-[#8AC6D1] shadow-[3px_3px_0px_#8AC6D1] hover:shadow-[1px_1px_0px_#8AC6D1] hover:translate-x-[2px] hover:translate-y-[2px] transition-all btn-teal">
+            {/* ── Terms & Privacy consent ── */}
+            <div className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
+              <div
+                onClick={()=>setTermsAccepted(v=>!v)}
+                className={`mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center cursor-pointer flex-shrink-0 transition-all ${termsAccepted?'bg-[#111] border-[#111]':'border-slate-300 hover:border-slate-400'}`}>
+                {termsAccepted&&<span className="material-icons text-white" style={{fontSize:'10px'}}>check</span>}
+              </div>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                ฉันได้อ่านและยอมรับ{' '}
+                <button type="button" onClick={()=>setShowPrivacy(true)} className="font-bold text-[#111] underline underline-offset-2 hover:text-slate-600 transition-colors">
+                  นโยบายความเป็นส่วนตัว
+                </button>
+                {' '}ของระบบจัดการงานไปรษณีย์
+              </p>
+            </div>
+
+            {/* ── Privacy Policy Modal ── */}
+            {showPrivacy&&(
+              <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" onClick={()=>setShowPrivacy(false)}>
+                <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+                <div className="relative bg-white rounded-xl border-2 border-[#111] shadow-[6px_6px_0px_#111] max-w-lg w-full max-h-[80vh] flex flex-col" onClick={e=>e.stopPropagation()}>
+                  <div className="flex items-center justify-between p-5 border-b border-slate-100">
+                    <div>
+                      <h3 className="font-black text-sm text-[#111]">นโยบายความเป็นส่วนตัว</h3>
+                      <p className="text-[10px] text-slate-400 mt-0.5 font-mono">PostOffice Management System · มิถุนายน 2569</p>
+                    </div>
+                    <button onClick={()=>setShowPrivacy(false)} className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors">
+                      <span className="material-icons text-sm text-slate-500">close</span>
+                    </button>
+                  </div>
+                  <div className="overflow-y-auto p-5 text-xs text-slate-600 leading-relaxed space-y-4">
+                    <p className="text-[11px] font-bold text-[#111] uppercase tracking-widest font-mono">ระบบบริหารจัดการงานไปรษณีย์ — นโยบายความเป็นส่วนตัว</p>
+                    <p>ระบบนี้จัดทำขึ้นเพื่อใช้ภายในองค์กร สำหรับการลงทะเบียน พิมพ์ซอง และติดตามหนังสือราชการ เราตระหนักถึงความสำคัญของข้อมูลส่วนบุคคลและปฏิบัติตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)</p>
+                    <section>
+                      <h4 className="font-bold text-[#111] mb-1.5 text-[11px] uppercase tracking-widest font-mono">1. ข้อมูลที่เก็บรวบรวม</h4>
+                      <p>ชื่อ-นามสกุล ชื่อผู้ใช้ อีเมล (ถ้ามี) ชื่อสำนักงาน ตำแหน่ง รหัสผ่าน (เข้ารหัส bcrypt) วันที่ยอมรับนโยบาย รวมถึงข้อมูลหนังสือราชการ เช่น ชื่อผู้รับ เลขที่หนังสือ ที่อยู่ และเลขแท็กไปรษณีย์</p>
+                    </section>
+                    <section>
+                      <h4 className="font-bold text-[#111] mb-1.5 text-[11px] uppercase tracking-widest font-mono">2. วัตถุประสงค์การใช้ข้อมูล</h4>
+                      <p>เพื่อยืนยันตัวตนและควบคุมสิทธิ์เข้าถึง ให้บริการลงทะเบียนและพิมพ์เอกสาร และบันทึกประวัติการใช้งานเพื่อตรวจสอบย้อนหลังเท่านั้น</p>
+                    </section>
+                    <section>
+                      <h4 className="font-bold text-[#111] mb-1.5 text-[11px] uppercase tracking-widest font-mono">3. การเปิดเผยข้อมูล</h4>
+                      <p>ระบบไม่เปิดเผยข้อมูลส่วนบุคคลแก่บุคคลภายนอก ยกเว้นผู้ให้บริการฐานข้อมูล Supabase (SOC 2 Type II) ผู้ดูแลระบบของหน่วยงาน และกรณีที่กฎหมายกำหนด</p>
+                    </section>
+                    <section>
+                      <h4 className="font-bold text-[#111] mb-1.5 text-[11px] uppercase tracking-widest font-mono">4. ความปลอดภัย</h4>
+                      <p>รหัสผ่านเข้ารหัสด้วย bcrypt การสื่อสารใช้ TLS 1.2+ (HTTPS) ระบบยืนยันตัวตนผ่าน Supabase Auth และควบคุมสิทธิ์แบบ RBAC</p>
+                    </section>
+                    <section>
+                      <h4 className="font-bold text-[#111] mb-1.5 text-[11px] uppercase tracking-widest font-mono">5. การเก็บรักษาข้อมูล</h4>
+                      <p>ข้อมูลบัญชีเก็บตลอดอายุการใช้งาน ข้อมูลหนังสือราชการเก็บตามระเบียบของหน่วยงาน หลักฐานการยินยอมเก็บตลอดอายุบัญชี + 1 ปีหลังปิดบัญชี</p>
+                    </section>
+                    <section>
+                      <h4 className="font-bold text-[#111] mb-1.5 text-[11px] uppercase tracking-widest font-mono">6. สิทธิ์ของเจ้าของข้อมูล</h4>
+                      <p>คุณมีสิทธิ์เข้าถึง แก้ไข ลบ คัดค้าน และถ่ายโอนข้อมูลส่วนตัว โดยติดต่อผู้ดูแลระบบของหน่วยงาน ระบบจะดำเนินการภายใน 30 วัน</p>
+                    </section>
+                    <section>
+                      <h4 className="font-bold text-[#111] mb-1.5 text-[11px] uppercase tracking-widest font-mono">7. การเปลี่ยนแปลงนโยบาย</h4>
+                      <p>หากมีการแก้ไขสาระสำคัญ ผู้ใช้จะได้รับแจ้งผ่านระบบก่อน การใช้งานต่อเนื่องถือว่ายอมรับนโยบายฉบับใหม่</p>
+                    </section>
+                  </div>
+                  <div className="p-4 border-t border-slate-100 flex gap-3">
+                    <button onClick={()=>{setTermsAccepted(true);setShowPrivacy(false)}} className="flex-1 bg-[#111] text-white text-xs font-bold py-2.5 rounded-lg tracking-widest uppercase hover:bg-slate-800 transition-colors">
+                      ยอมรับนโยบาย
+                    </button>
+                    <button onClick={()=>setShowPrivacy(false)} className="px-5 bg-slate-100 text-slate-600 text-xs font-bold py-2.5 rounded-lg hover:bg-slate-200 transition-colors">
+                      ปิด
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <button onClick={handleRegister} disabled={loading||!termsAccepted}
+              className={`w-full py-2.5 rounded-lg font-bold text-xs tracking-widest uppercase flex items-center justify-center gap-2 border-2 transition-all
+                ${termsAccepted
+                  ?'border-[#8AC6D1] shadow-[3px_3px_0px_#8AC6D1] hover:shadow-[1px_1px_0px_#8AC6D1] hover:translate-x-[2px] hover:translate-y-[2px] btn-teal'
+                  :'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed opacity-60'}`}>
               {loading?<><div className="spinner"></div>กำลังตรวจสอบ...</>:<><span className="material-icons text-base">arrow_forward</span>ถัดไป: กรอกข้อมูลสำนักงาน</>}
             </button>
           </div>
@@ -667,6 +753,50 @@ function AdminPanel({ currentUser, addToast, onClose }:{ currentUser:SessionUser
 }
 
 // ── Header ────────────────────────────────────────────────────────────────────
+
+// ── Donate Modal ───────────────────────────────────────────────────────────────
+function DonateModal({ onClose, onPaid }: { onClose:()=>void; onPaid:()=>void }) {
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+      <div
+        className="relative bg-white rounded-2xl border-2 border-[#111] shadow-[8px_8px_0px_#111] max-w-sm w-full overflow-hidden animate-fadeIn"
+        onClick={e=>e.stopPropagation()}>
+
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-black/10 flex items-center justify-center hover:bg-black/20 transition-colors">
+          <span className="material-icons text-sm text-slate-700">close</span>
+        </button>
+
+        {/* Poster image */}
+        <img
+          src="/donate-qr.png"
+          alt="Donate & Support"
+          className="w-full block"
+          draggable={false}
+        />
+
+        {/* Footer actions */}
+        <div className="p-4 flex gap-3 border-t border-slate-100">
+          <button
+            onClick={()=>{ onPaid(); onClose() }}
+            className="flex-1 bg-[#111] text-white text-xs font-bold py-2.5 rounded-lg tracking-widest uppercase hover:bg-slate-800 transition-colors flex items-center justify-center gap-1.5">
+            <span className="material-icons text-sm">volunteer_activism</span>
+            จ่ายแล้ว ขอบคุณครับ
+          </button>
+          <button
+            onClick={onClose}
+            className="px-5 bg-slate-100 text-slate-600 text-xs font-bold py-2.5 rounded-lg hover:bg-slate-200 transition-colors">
+            ปิด
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function Header({ setPage, darkMode, setDarkMode, currentUser, onLogout, onAdminPanel }:any) {
   return (
     <header className="sticky top-0 z-50 h-14 flex items-center relative">
@@ -687,7 +817,7 @@ function Header({ setPage, darkMode, setDarkMode, currentUser, onLogout, onAdmin
             ))}
 
           </nav>
-          {canManage(currentUser?.role||'')&&<button onClick={onAdminPanel} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-primary transition-colors border border-slate-200 dark:border-slate-600 hover:bg-slate-50"><span className="material-icons text-sm">admin_panel_settings</span>{currentUser?.role==='global_admin'?'Global Admin':'Admin'}</button>}
+          {canManage(currentUser?.role||'')&&<button onClick={onAdminPanel} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-primary transition-colors border border-slate-200 dark:border-slate-600 hover:bg-slate-50"><span className="material-icons text-sm">settings</span>การตั้งค่า</button>}
           <div className="flex items-center gap-2 px-2.5 py-1 bg-slate-50 dark:bg-slate-700 rounded-md">
             <span className="material-icons text-slate-400 text-sm">person</span>
             <span className="text-xs font-bold text-slate-600 dark:text-slate-300 max-w-[80px] truncate">{currentUser?.name}</span>
@@ -1126,7 +1256,7 @@ function RegisterPage({ setPage, locations, refresh, addToast, currentUser }:any
 
 // ── Queue Page ────────────────────────────────────────────────────────────────
 const PAGE_SIZE=20
-function QueuePage({ setPage, addToast, currentUser }:any) {
+function QueuePage({ setPage, addToast, currentUser, onAfterPrint }:any) {
   const [dateFrom,setDateFrom]=useState('')
   const [dateTo,setDateTo]=useState('')
   const [ownerFilter,setOwnerFilter]=useState('')
@@ -1245,6 +1375,8 @@ function QueuePage({ setPage, addToast, currentUser }:any) {
     }
     api.openEnvelopePrint(rowIds,sizeMap[type]||'DL',currentUser.username)
     addToast('เปิดหน้าพิมพ์แล้ว ('+rowIds.length+' รายการ)','success')
+    // Show donate popup after print (once only)
+    setTimeout(()=>{ if(onAfterPrint)onAfterPrint() },600)
   }
 
   const handleExportPostalExcel=async()=>{
@@ -1917,6 +2049,22 @@ export default function App() {
   const [locations,setLocations]=useState<any[]>([])
   const [toasts,setToasts]=useState<ToastItem[]>([])
   const [showAdmin,setShowAdmin]=useState(false)
+  const [showDonate,setShowDonate]=useState(false)
+
+  // helper: show donate popup only if user hasn't paid yet
+  const maybeShowDonate=()=>{
+    try{ if(localStorage.getItem(DONATE_KEY)==='1')return }catch{}
+    setShowDonate(true)
+  }
+  const [pendingLogout,setPendingLogout]=useState(false)
+  const markPaid=()=>{ try{localStorage.setItem(DONATE_KEY,'1')}catch{} setShowDonate(false); if(pendingLogout)doLogout() }
+  const dismissDonate=()=>{ setShowDonate(false); if(pendingLogout)doLogout() }
+  const doLogout=()=>{
+    setPendingLogout(false)
+    setCurrentUser(null); setPage('home'); setShowExpModal(false)
+    try{sessionStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(PAGE_KEY)}catch{}
+    addToast('ออกจากระบบแล้ว','info')
+  }
   const [showExpModal,setShowExpModal]=useState(false)
 
   // restore session + page จาก sessionStorage หลัง client mount เท่านั้น
@@ -1957,6 +2105,13 @@ export default function App() {
 
   const handleLogin=(user:SessionUser)=>setCurrentUser(user)
   const handleLogout=()=>{
+    // Show donate once before logout (if not paid yet)
+    try{
+      if(localStorage.getItem(DONATE_KEY)!=='1'){
+        setShowDonate(true)
+        return   // logout continues after user closes/confirms donate modal
+      }
+    }catch{}
     setCurrentUser(null)
     setPage('home')
     setShowExpModal(false)
@@ -1984,7 +2139,7 @@ export default function App() {
       <main className="flex-grow">
         {page==='home'     &&<HomePage     setPage={setPage}/>}
         {page==='register' &&<RegisterPage setPage={setPage} locations={locations} refresh={loadLocations} addToast={addToast} currentUser={currentUser}/>}
-        {page==='queue'    &&<QueuePage    setPage={setPage} addToast={addToast} currentUser={currentUser}/>}
+        {page==='queue'    &&<QueuePage    setPage={setPage} addToast={addToast} currentUser={currentUser} onAfterPrint={maybeShowDonate}/>}
         {page==='track'    &&<TrackPage    setPage={setPage} addToast={addToast} currentUser={currentUser}/>}
       </main>
       <footer className="py-4 text-center border-t-2 border-black/5">
@@ -2000,6 +2155,7 @@ export default function App() {
       {/* Overlay to block expired users from interacting while modal shows */}
       {expired&&!showExpModal&&<div className="fixed inset-0 bg-black/40 z-[9990]" onClick={()=>setShowExpModal(true)}/>}
       <ChatWidget currentUser={currentUser}/>
+      {showDonate&&<DonateModal onClose={dismissDonate} onPaid={markPaid}/>}
     </div>
   )
 }
