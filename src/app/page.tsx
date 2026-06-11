@@ -781,7 +781,7 @@ function DonateModal({ onClose, onPaid }: { onClose:()=>void; onPaid:()=>void })
         {/* Footer actions */}
         <div className="p-4 flex gap-3 border-t border-slate-100">
           <button
-            onClick={()=>{ onPaid(); onClose() }}
+            onClick={onPaid}
             className="flex-1 bg-[#111] text-white text-xs font-bold py-2.5 rounded-lg tracking-widest uppercase hover:bg-slate-800 transition-colors flex items-center justify-center gap-1.5">
             <span className="material-icons text-sm">volunteer_activism</span>
             จ่ายแล้ว ขอบคุณครับ
